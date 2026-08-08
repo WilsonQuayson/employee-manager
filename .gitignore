@@ -1,0 +1,32 @@
+# -----------------------
+# React / Node
+# -----------------------
+
+node_modules/
+dist/
+
+.env
+.env.*
+!.env.example
+
+# -----------------------
+# .NET
+# -----------------------
+
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# -----------------------
+# IDE / OS
+# -----------------------
+
+.vscode/
+.DS_Store
+Thumbs.db
