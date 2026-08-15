@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+/* Apply Tailwind's `font-sans` (now mapped to Plus Jakarta Sans) to the body */
+@layer base {
+  body {
+    @apply font-sans;
+  }
+}
