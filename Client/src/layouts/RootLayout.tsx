@@ -1,14 +1,16 @@
 import React from "react";
-import { Outlet, Link } from "react-router-dom";
-import Nav from "../components/Nav"
+import { Outlet } from "react-router-dom";
+import SideNav from "../components/SideNav"
+import TopNav from "../components/TopNav";
 
 const RootLayout: React.FC = () => {
   return (
-    <div>
-        <Nav />
-        <main className="p-4">
-            <Outlet />
-        </main>
+    <div className="overflow-hidden flex">
+      <SideNav />
+      <TopNav />
+      <main>
+        <Outlet />
+      </main>
     </div>
   );
 };

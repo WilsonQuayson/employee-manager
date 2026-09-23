@@ -11,6 +11,20 @@ module.exports = {
       fontFamily: {
         sans: ['Plus Jakarta Sans', ...defaultTheme.fontFamily.sans],
       },
+      colors: {
+        primary: "#169f65",
+        "primary-foreground": "#f7fef9",
+        accent: "#e7f6ed",
+        "accent-foreground": "#004828",
+        secondary: "#F9FBFD",
+        "secondary-foreground": "#0f172b",
+        muted: "#f3f6f9",
+        "muted-foreground": "#62748e",
+
+        border: "#e2e8f0",
+        foreground: "#020618"
+
+      }
     },
   },
   plugins: [],
