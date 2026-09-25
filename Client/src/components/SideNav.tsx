@@ -7,8 +7,8 @@ import WindowIcon from "../assets/icons/WindowIcon";
 import NavItem from "./NavItem";
 
 const menuItemsOne = [
-    { label: "Dashboard", icon: WindowIcon, to: "#" },
-    { label: "Employees", icon: EmployeesIcon, to: "#" },
+    { label: "Dashboard", icon: WindowIcon, to: "/" },
+    { label: "Employees", icon: EmployeesIcon, to: "about" },
     { label: "Departments", icon: DepartmentsIcon, to: "#" }
 ];
 

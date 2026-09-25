@@ -7,10 +7,12 @@ const RootLayout: React.FC = () => {
   return (
     <div className="overflow-hidden flex">
       <SideNav />
-      <TopNav />
-      <main>
-        <Outlet />
-      </main>
+      <div className="flex flex-col w-screen">
+        <TopNav />
+        <main className="px-16">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };

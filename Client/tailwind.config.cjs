@@ -20,9 +20,11 @@ module.exports = {
         "secondary-foreground": "#0f172b",
         muted: "#f3f6f9",
         "muted-foreground": "#62748e",
+        error: "#db2c2a",
 
         border: "#e2e8f0",
-        foreground: "#020618"
+        foreground: "#020618",
+        ring: "#8F8F8F"
 
       }
     },
