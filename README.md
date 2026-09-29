@@ -23,8 +23,6 @@ A modern employee management dashboard built with React, TypeScript, Vite, Tailw
 
 ## Screenshots
 
-> Add your screenshots to a docs/screenshots folder and uncomment the image below once the files are added.
-
 <p align="center">
   <img src="./docs/screenshots/dashboard.png" alt="Desktop View" width="650">
 </p>
