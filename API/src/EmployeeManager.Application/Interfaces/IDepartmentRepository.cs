@@ -1,0 +1,18 @@
+﻿using EmployeeManager.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EmployeeManager.Application.Interfaces
+{
+    public interface IDepartmentRepository
+    {
+        Task<List<Department>> GetAllAsync();
+        Task<Department?> GetByIdAsync(int id);
+        Task<Department> CreateAsync(Department department);
+        Task UpdateAsync(Department department);
+        Task DeleteAsync(Department department);
+    }
+}
