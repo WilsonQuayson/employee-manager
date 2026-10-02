@@ -52,5 +52,17 @@ namespace EmployeeManager.Infrastructure.Repositories
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> NameExistsAsync(string name, int? excludeDepartmentId = null)
+        {
+            return await _context.Departments.AnyAsync(d =>
+                d.Name == name &&
+                (!excludeDepartmentId.HasValue || d.Id != excludeDepartmentId.Value));
+        }
+
+        public async Task<bool> HasEmployeesAsync(int departmentId)
+        {
+            return await _context.Employees.AnyAsync(e => e.DepartmentId == departmentId);
+        }
     }
 }

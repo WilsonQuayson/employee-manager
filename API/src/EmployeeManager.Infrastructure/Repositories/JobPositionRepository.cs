@@ -47,4 +47,16 @@ public class JobPositionRepository : IJobPositionRepository
 
         await _context.SaveChangesAsync();
     }
+
+    public async Task<bool> TitleExistsAsync(string title, int? excludeJobPositionId = null)
+    {
+        return await _context.JobPositions.AnyAsync(j =>
+            j.Title == title &&
+            (!excludeJobPositionId.HasValue || j.Id != excludeJobPositionId.Value));
+    }
+
+    public async Task<bool> HasEmployeesAsync(int jobPositionId)
+    {
+        return await _context.Employees.AnyAsync(e => e.JobPositionId == jobPositionId);
+    }
 }

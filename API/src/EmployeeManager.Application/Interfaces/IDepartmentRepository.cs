@@ -14,5 +14,7 @@ namespace EmployeeManager.Application.Interfaces
         Task<Department> CreateAsync(Department department);
         Task UpdateAsync(Department department);
         Task DeleteAsync(Department department);
+        Task<bool> NameExistsAsync(string name, int? excludeDepartmentId = null);
+        Task<bool> HasEmployeesAsync(int departmentId);
     }
 }

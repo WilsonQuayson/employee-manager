@@ -9,4 +9,6 @@ public interface IJobPositionRepository
     Task<JobPosition> CreateAsync(JobPosition jobPosition);
     Task UpdateAsync(JobPosition jobPosition);
     Task DeleteAsync(JobPosition jobPosition);
+    Task<bool> TitleExistsAsync(string title, int? excludeJobPositionId = null);
+    Task<bool> HasEmployeesAsync(int jobPositionId);
 }

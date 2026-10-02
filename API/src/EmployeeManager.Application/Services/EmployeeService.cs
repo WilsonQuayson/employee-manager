@@ -13,10 +13,14 @@ namespace EmployeeManager.Application.Services
     public class EmployeeService : IEmployeeService
     {
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IJobPositionRepository _jobPositionRepository;
 
-        public EmployeeService(IEmployeeRepository employeeRepository)
+        public EmployeeService(IEmployeeRepository employeeRepository,IDepartmentRepository departmentRepository,IJobPositionRepository jobPositionRepository)
         {
             _employeeRepository = employeeRepository;
+            _departmentRepository = departmentRepository;
+            _jobPositionRepository = jobPositionRepository;
         }
 
 
@@ -43,9 +47,25 @@ namespace EmployeeManager.Application.Services
         }
 
 
-        public async Task<EmployeeResponseDto> CreateAsync(
-            EmployeeRequestDto request)
+        public async Task<EmployeeResponseDto> CreateAsync(EmployeeRequestDto request)
         {
+            var department = await _departmentRepository.GetByIdAsync(request.DepartmentId);
+
+            if (department == null)
+            {
+                throw new ArgumentException(
+                    $"Department with ID {request.DepartmentId} does not exist.");
+            }
+
+            var jobPosition = await _jobPositionRepository.GetByIdAsync(request.JobPositionId);
+
+            if (jobPosition == null)
+            {
+                throw new ArgumentException(
+                    $"Job position with ID {request.JobPositionId} does not exist.");
+            }
+
+
             var employee = new Employee
             {
                 FirstName = request.FirstName,
@@ -70,9 +90,7 @@ namespace EmployeeManager.Application.Services
         }
 
 
-        public async Task<bool> UpdateAsync(
-            int id,
-            EmployeeRequestDto request)
+        public async Task<bool> UpdateAsync(int id, EmployeeRequestDto request)
         {
             var employee = await _employeeRepository.GetByIdAsync(id);
 
@@ -80,6 +98,24 @@ namespace EmployeeManager.Application.Services
             {
                 return false;
             }
+
+
+            var department = await _departmentRepository.GetByIdAsync(request.DepartmentId);
+
+            if (department == null)
+            {
+                throw new ArgumentException(
+                    $"Department with ID {request.DepartmentId} does not exist.");
+            }
+
+            var jobPosition = await _jobPositionRepository.GetByIdAsync(request.JobPositionId);
+
+            if (jobPosition == null)
+            {
+                throw new ArgumentException(
+                    $"Job position with ID {request.JobPositionId} does not exist.");
+            }
+
 
             employee.FirstName = request.FirstName;
             employee.LastName = request.LastName;
@@ -103,7 +139,8 @@ namespace EmployeeManager.Application.Services
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var employee = await _employeeRepository.GetByIdAsync(id);
+            var employee =
+                await _employeeRepository.GetByIdAsync(id);
 
             if (employee == null)
             {
