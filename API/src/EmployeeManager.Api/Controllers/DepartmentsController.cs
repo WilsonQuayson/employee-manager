@@ -45,8 +45,7 @@ public class DepartmentsController : ControllerBase
 
     // POST: api/departments
     [HttpPost]
-    public async Task<ActionResult<DepartmentResponseDto>> Create(
-        DepartmentRequestDto request)
+    public async Task<ActionResult<DepartmentResponseDto>> Create(DepartmentRequestDto request)
     {
         var department = await _departmentService.CreateAsync(request);
 
