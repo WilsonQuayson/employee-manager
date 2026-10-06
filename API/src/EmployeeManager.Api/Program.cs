@@ -1,4 +1,5 @@
 
+using EmployeeManager.Api.ExceptionHandling;
 using EmployeeManager.Application.Interfaces;
 using EmployeeManager.Application.Services;
 using EmployeeManager.Infrastructure.Data;
@@ -26,6 +27,9 @@ namespace EmployeeManager.Api
             builder.Services.AddScoped<IJobPositionRepository, JobPositionRepository>();
             builder.Services.AddScoped<IJobPositionService, JobPositionService>();
 
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddProblemDetails();
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -39,6 +43,8 @@ namespace EmployeeManager.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseExceptionHandler();
 
             app.UseHttpsRedirection();
 

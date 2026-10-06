@@ -1,5 +1,6 @@
 ﻿using EmployeeManager.Application.DTOs.Department.Request;
 using EmployeeManager.Application.DTOs.Department.Response;
+using EmployeeManager.Application.Exceptions;
 using EmployeeManager.Application.Interfaces;
 using EmployeeManager.Domain.Entities;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace EmployeeManager.Application.Services
 {
@@ -44,7 +46,7 @@ namespace EmployeeManager.Application.Services
 
             if (nameExists)
             {
-                throw new ArgumentException("A department with this name already exists.");
+                throw new ConflictException("A department with this name already exists.");
             }
 
             var department = new Department
@@ -70,7 +72,7 @@ namespace EmployeeManager.Application.Services
 
             if (nameExists)
             {
-                throw new ArgumentException("A department with this name already exists.");
+                throw new ConflictException("A department with this name already exists.");
             }
 
             department.Name = request.Name;
@@ -93,7 +95,7 @@ namespace EmployeeManager.Application.Services
 
             if (hasEmployees)
             {
-                throw new InvalidOperationException("The department cannot be deleted because employees are assigned to it.");
+                throw new ConflictException("The department cannot be deleted because employees are assigned to it.");
             }
 
             await _departmentRepository.DeleteAsync(department);

@@ -1,5 +1,6 @@
 ﻿using EmployeeManager.Application.DTOs.Employee.Request;
 using EmployeeManager.Application.DTOs.Employee.Response;
+using EmployeeManager.Application.Exceptions;
 using EmployeeManager.Application.Interfaces;
 using EmployeeManager.Domain.Entities;
 using System;
@@ -53,23 +54,21 @@ namespace EmployeeManager.Application.Services
 
             if (department == null)
             {
-                throw new ArgumentException(
-                    $"Department with ID {request.DepartmentId} does not exist.");
+                throw new BadRequestException($"Department with ID {request.DepartmentId} does not exist.");
             }
 
             var jobPosition = await _jobPositionRepository.GetByIdAsync(request.JobPositionId);
 
             if (jobPosition == null)
             {
-                throw new ArgumentException(
-                    $"Job position with ID {request.JobPositionId} does not exist.");
+                throw new BadRequestException($"Job position with ID {request.JobPositionId} does not exist.");
             }
 
             var emailExists = await _employeeRepository.EmailExistsAsync(request.Email);
 
             if (emailExists)
             {
-                throw new ArgumentException("An employee with this email already exists.");
+                throw new ConflictException("An employee with this email already exists.");
             }
 
             if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
@@ -78,7 +77,7 @@ namespace EmployeeManager.Application.Services
 
                 if (phoneNumberExists)
                 {
-                    throw new ArgumentException("An employee with this phone number already exists.");
+                    throw new ConflictException("An employee with this phone number already exists.");
                 }
             }
 
@@ -121,23 +120,21 @@ namespace EmployeeManager.Application.Services
 
             if (department == null)
             {
-                throw new ArgumentException(
-                    $"Department with ID {request.DepartmentId} does not exist.");
+                throw new BadRequestException($"Department with ID {request.DepartmentId} does not exist.");
             }
 
             var jobPosition = await _jobPositionRepository.GetByIdAsync(request.JobPositionId);
 
             if (jobPosition == null)
             {
-                throw new ArgumentException(
-                    $"Job position with ID {request.JobPositionId} does not exist.");
+                throw new BadRequestException($"Job position with ID {request.JobPositionId} does not exist.");
             }
 
             var emailExists = await _employeeRepository.EmailExistsAsync(request.Email, id);
 
             if (emailExists)
             {
-                throw new ArgumentException("An employee with this email already exists.");
+                throw new ConflictException("An employee with this email already exists.");
             }
 
             if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
@@ -146,7 +143,7 @@ namespace EmployeeManager.Application.Services
 
                 if (phoneNumberExists)
                 {
-                    throw new ArgumentException("An employee with this phone number already exists.");
+                    throw new ConflictException("An employee with this phone number already exists.");
                 }
             }
 

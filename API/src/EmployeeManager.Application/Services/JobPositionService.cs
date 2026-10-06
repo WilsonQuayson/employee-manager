@@ -1,6 +1,7 @@
 ﻿using EmployeeManager.Application.DTOs.JobPosition;
 using EmployeeManager.Application.DTOs.JobPosition.Request;
 using EmployeeManager.Application.DTOs.JobPosition.Response;
+using EmployeeManager.Application.Exceptions;
 using EmployeeManager.Application.Interfaces;
 using EmployeeManager.Domain.Entities;
 
@@ -40,14 +41,14 @@ public class JobPositionService : IJobPositionService
 
         if (titleExists)
         {
-            throw new ArgumentException("A job position with this title already exists.");
+            throw new ConflictException("A job position with this title already exists.");
         }
 
         if (request.MinimumSalary.HasValue &&
             request.MaximumSalary.HasValue &&
             request.MinimumSalary > request.MaximumSalary)
         {
-            throw new ArgumentException("Minimum salary cannot be greater than maximum salary.");
+            throw new BadRequestException("Minimum salary cannot be greater than maximum salary.");
         }
 
         var jobPosition = new JobPosition
@@ -75,14 +76,14 @@ public class JobPositionService : IJobPositionService
 
         if (titleExists)
         {
-            throw new ArgumentException("A job position with this title already exists.");
+            throw new ConflictException("A job position with this title already exists.");
         }
 
         if (request.MinimumSalary.HasValue &&
             request.MaximumSalary.HasValue &&
             request.MinimumSalary > request.MaximumSalary)
         {
-            throw new ArgumentException("Minimum salary cannot be greater than maximum salary.");
+            throw new BadRequestException("Minimum salary cannot be greater than maximum salary.");
         }
 
         jobPosition.Title = request.Title;
@@ -107,8 +108,7 @@ public class JobPositionService : IJobPositionService
 
         if (hasEmployees)
         {
-            throw new InvalidOperationException(
-                "The job position cannot be deleted because employees are assigned to it.");
+            throw new ConflictException("The job position cannot be deleted because employees are assigned to it.");
         }
 
         await _jobPositionRepository.DeleteAsync(jobPosition);
