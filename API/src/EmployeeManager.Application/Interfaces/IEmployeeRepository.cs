@@ -14,5 +14,7 @@ namespace EmployeeManager.Application.Interfaces
         Task<Employee> CreateAsync(Employee employee);
         Task UpdateAsync(Employee employee);
         Task DeleteAsync(Employee employee);
+        Task<bool> EmailExistsAsync(string email, int? excludeEmployeeId = null);
+        Task<bool> PhoneNumberExistsAsync(string phoneNumber, int? excludeEmployeeId = null);
     }
 }

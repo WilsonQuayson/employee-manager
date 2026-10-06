@@ -64,5 +64,19 @@ namespace EmployeeManager.Infrastructure.Repositories
             _context.Employees.Remove(employee);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> EmailExistsAsync(string email, int? excludeEmployeeId = null)
+        {
+            return await _context.Employees.AnyAsync(e =>
+                e.Email == email &&
+                (!excludeEmployeeId.HasValue || e.Id != excludeEmployeeId.Value));
+        }
+
+        public async Task<bool> PhoneNumberExistsAsync(string phoneNumber, int? excludeEmployeeId = null)
+        {
+            return await _context.Employees.AnyAsync(e =>
+                e.PhoneNumber == phoneNumber &&
+                (!excludeEmployeeId.HasValue || e.Id != excludeEmployeeId.Value));
+        }
     }
 }

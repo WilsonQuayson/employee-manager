@@ -65,6 +65,23 @@ namespace EmployeeManager.Application.Services
                     $"Job position with ID {request.JobPositionId} does not exist.");
             }
 
+            var emailExists = await _employeeRepository.EmailExistsAsync(request.Email);
+
+            if (emailExists)
+            {
+                throw new ArgumentException("An employee with this email already exists.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
+            {
+                var phoneNumberExists = await _employeeRepository.PhoneNumberExistsAsync(request.PhoneNumber);
+
+                if (phoneNumberExists)
+                {
+                    throw new ArgumentException("An employee with this phone number already exists.");
+                }
+            }
+
 
             var employee = new Employee
             {
@@ -114,6 +131,23 @@ namespace EmployeeManager.Application.Services
             {
                 throw new ArgumentException(
                     $"Job position with ID {request.JobPositionId} does not exist.");
+            }
+
+            var emailExists = await _employeeRepository.EmailExistsAsync(request.Email, id);
+
+            if (emailExists)
+            {
+                throw new ArgumentException("An employee with this email already exists.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
+            {
+                var phoneNumberExists = await _employeeRepository.PhoneNumberExistsAsync(request.PhoneNumber, id);
+
+                if (phoneNumberExists)
+                {
+                    throw new ArgumentException("An employee with this phone number already exists.");
+                }
             }
 
 
