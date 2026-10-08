@@ -147,5 +147,22 @@ namespace EmployeeManager.Infrastructure.Repositories
                 })
                 .ToList();
         }
+
+        public async Task<List<SalaryBandDto>> GetSalaryBandsByPositionAsync()
+        {
+            return await _context.JobPositions
+                .AsNoTracking()
+                .Select(j => new SalaryBandDto
+                {
+                    Position = j.Title,
+                    MinimumSalary = j.MinimumSalary,
+                    MaximumSalary = j.MaximumSalary,
+                    AverageSalary = j.Employees.Any()
+                        ? Math.Round(
+                            j.Employees.Average(e => (decimal?)e.Salary)!.Value, 0)
+                        : null
+                })
+                .ToListAsync();
+        }
     }
 }

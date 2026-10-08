@@ -29,7 +29,8 @@ namespace EmployeeManager.Application.Services
                 EmployeeGrowth = await _dashboardRepository.GetEmployeeGrowthAsync(),
                 EmployeesByDepartment = await _dashboardRepository.GetEmployeesByDepartmentAsync(),
                 EmployeesByStatus = await _dashboardRepository.GetEmployeesByStatusAsync(),
-                MonthlyHires = await _dashboardRepository.GetMonthlyHiresAsync()
+                MonthlyHires = await _dashboardRepository.GetMonthlyHiresAsync(),
+                SalaryBandsByPosition = await _dashboardRepository.GetSalaryBandsByPositionAsync()
             };
         }
     }

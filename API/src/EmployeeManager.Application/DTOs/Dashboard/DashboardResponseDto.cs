@@ -17,5 +17,6 @@ namespace EmployeeManager.Application.DTOs.Dashboard
         public List<DepartmentCountDto> EmployeesByDepartment { get; set; } = [];
         public List<StatusCountDto> EmployeesByStatus { get; set; } = [];
         public List<MonthlyHireDto> MonthlyHires { get; set; } = [];
+        public List<SalaryBandDto> SalaryBandsByPosition { get; set; } = [];
     }
 }

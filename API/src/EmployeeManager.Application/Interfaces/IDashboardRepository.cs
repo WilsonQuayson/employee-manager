@@ -18,5 +18,6 @@ namespace EmployeeManager.Application.Interfaces
         Task<List<DepartmentCountDto>> GetEmployeesByDepartmentAsync();
         Task<List<StatusCountDto>> GetEmployeesByStatusAsync();
         Task<List<MonthlyHireDto>> GetMonthlyHiresAsync();
+        Task<List<SalaryBandDto>> GetSalaryBandsByPositionAsync();
     }
 }
