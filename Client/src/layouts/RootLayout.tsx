@@ -5,11 +5,11 @@ import TopNav from "../components/TopNav";
 
 const RootLayout: React.FC = () => {
   return (
-    <div className="overflow-hidden flex">
+    <div className="flex h-screen overflow-hidden">
       <SideNav />
-      <div className="flex flex-col w-screen">
+      <div className="flex min-w-0 flex-1 flex-col">
         <TopNav />
-        <main className="px-16">
+        <main className="min-h-0 flex-1 overflow-y-auto px-16">
           <Outlet />
         </main>
       </div>

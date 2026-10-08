@@ -28,4 +28,12 @@ export interface DashboardResponse {
   employeesByDepartment: DepartmentCount[];
   employeesByStatus: StatusCount[];
   monthlyHires: MonthlyHire[];
+  salaryBandsByPosition: SalaryBand[];
+}
+
+export interface SalaryBand {
+  position: string;
+  minimumSalary: number | null;
+  maximumSalary: number | null;
+  averageSalary: number | null;
 }

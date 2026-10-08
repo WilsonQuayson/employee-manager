@@ -4,6 +4,9 @@ import EmployeeGrowthChart from "../components/EmployeeGrowthChart";
 import StatsCard from "../components/StatsCard";
 import { getDashboard } from "../api/dashboardApi";
 import type { DashboardResponse } from "../types/dashboard";
+import DepartmentDistributionChart from "../components/DepartmentDistributionChart";
+import EmploymentStatusChart from "../components/EmploymentStatusChart";
+import SalaryBandsChart from "../components/SalaryBandsChart";
 
 const Home: React.FC = () => {
     const [dashboard, setDashboard] = useState<DashboardResponse | null>(null);
@@ -79,6 +82,17 @@ const Home: React.FC = () => {
             </section>
             <section className="grid grid-cols-6 gap-4 mt-4">
                 <EmployeeGrowthChart data={dashboard.employeeGrowth} />
+            </section>
+            <section className="grid grid-cols-4 gap-8 mt-8">
+                <div className="col-span-2">
+                    <DepartmentDistributionChart data={dashboard.employeesByDepartment} />
+                </div>
+                <div className="col-span-2">
+                    <EmploymentStatusChart data={dashboard.employeesByStatus}/>
+                </div>
+            </section>
+            <section className="grid grid-cols-6 gap-4 mt-4">
+                <SalaryBandsChart data={dashboard.salaryBandsByPosition} />
             </section>
         </section>
     );
