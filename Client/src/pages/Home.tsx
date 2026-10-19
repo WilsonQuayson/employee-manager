@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import Breadcrumb from "../components/Breadcrumb";
 import EmployeeGrowthChart from "../components/EmployeeGrowthChart";
 import StatsCard from "../components/StatsCard";
@@ -9,24 +10,11 @@ import EmploymentStatusChart from "../components/EmploymentStatusChart";
 import SalaryBandsChart from "../components/SalaryBandsChart";
 
 const Home: React.FC = () => {
-    const [dashboard, setDashboard] = useState<DashboardResponse | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        async function loadDashboard() {
-            try {
-                const data = await getDashboard();
-                setDashboard(data);
-            } catch {
-                setError("Failed to load dashboard");
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        loadDashboard();
-    }, []);
+    const {
+        data: dashboard,
+        isPending: loading,
+        isError,
+    } = useQuery<DashboardResponse>({queryKey: ["dashboard"],queryFn: getDashboard});
 
     if (loading) {
         return (
@@ -40,8 +28,8 @@ const Home: React.FC = () => {
         );
     }
 
-    if (error) {
-        return <p>{error}</p>;
+    if (isError) {
+        return <p>Failed to load dashboard</p>;
     }
 
     if (!dashboard) {
@@ -52,7 +40,7 @@ const Home: React.FC = () => {
         <section className="p-4 sm:p-6 lg:p-8">
             <section>
                 <Breadcrumb page="Dashboard" />
-                <h1 className="font-medium text-4xl">Good morning, User</h1>
+                <h1 className="font-medium text-4xl">Good morning, Wilson</h1>
                 <p className="pt-2 text-ring">Here's what's happening across your organization today</p>
             </section>
             <section className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
