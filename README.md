@@ -1,41 +1,101 @@
-# Employee Manager Dashboard
 
-A modern employee management dashboard built with React, TypeScript, Vite, Tailwind CSS, and Recharts. The app presents key workforce metrics, attendance insights, leave requests, and employee growth trends using mock data for quick UI prototyping and demo purposes.
+# Employee Manager
+
+A full-stack employee management application built with **React, TypeScript, ASP.NET Core, and SQL Server**.
+
+The application provides a centralized interface for managing employees, departments, and job positions, alongside an interactive dashboard that visualizes workforce data.
+
+The backend follows **Onion Architecture**, separating business logic, domain models, and data access to improve maintainability and scalability.
 
 ## Features
 
-- Overview dashboard with KPI summary cards
-- Employee headcount growth chart
-- Attendance and absence tracking
-- Leave request monitoring
-- Department and team metrics
-- Responsive layout for desktop and larger screens
-- Clean, modern UI using Tailwind styling
+### Dashboard
+
+- Overview dashboard with key workforce metrics
+- Employee distribution by department
+- Employment status distribution
+- Salary analysis by job position
+- Interactive charts using Recharts
+
+### Employee Management
+
+- View and manage employee records
+- Create employees through a form with validation
+- Search employees by name, email, or job position
+- Filter employees by department and employment status
+- Paginated employee table
+- Success and error notifications
+
+### Backend
+
+- RESTful API built with ASP.NET Core
+- Onion Architecture with separate Domain, Application, Infrastructure, and API layers
+- Entity Framework Core for database operations
+- SQL Server for persistent data storage
+- Repository and service layers for data access and business logic
+- DTOs for request and response models
+- Data validation and business rules
+- API documentation and testing through Swagger
 
 ## Tech Stack
 
-- React
-- TypeScript
-- Vite
-- Tailwind CSS
-- Recharts
-- React Router
+| Frontend | Backend |
+|---|---|
+| React | C# / ASP.NET Core |
+| TypeScript | Entity Framework Core |
+| Vite | SQL Server |
+| Tailwind CSS | REST API |
+| TanStack Query | Swagger / OpenAPI |
+| React Router | Onion Architecture |
+| Recharts | Repository Pattern |
+
+## Architecture
+
+The application is divided into a React frontend and an ASP.NET Core backend.
+
+The backend follows **Onion Architecture**, organizing responsibilities into four separate layers:
+
+- **Domain:** Contains core entities, enums, and domain models.
+- **Application:** Contains business logic, services, DTOs, and interfaces.
+- **Infrastructure:** Handles database communication using Entity Framework Core and repository implementations.
+- **API:** Exposes REST endpoints through controllers and configures dependency injection.
+
+This architecture separates business logic from infrastructure concerns, making the application easier to maintain, test, and extend.
+
+### Request Flow
+
+```text
+React Frontend
+      |
+      v
+ASP.NET Core API
+      |
+      v
+Application Services
+      |
+      v
+Repository Interfaces
+      |
+      v
+Infrastructure (EF Core)
+      |
+      v
+SQL Server Database
+```
 
 ## Screenshots
 
-<p>
-  <img src="./Client/docs/screenshots/dashboard.png" alt="Desktop View" width="100%">
-</p>
-<p>
-  <img src="./Client/docs/screenshots/EM-desktop-2.png" alt="Desktop View" width="100%">
-</p>
-<p>
-  <img src="./Client/docs/screenshots/EM-desktop-3.png" alt="Desktop View" width="100%">
-</p>
+### Dashboard
+
+<img src="./Client/docs/screenshots/dashboard.png" alt="Employee Manager Dashboard" width="100%">
+
+<img src="./Client/docs/screenshots/EM-desktop-2.png" alt="Employee Manager Dashboard Charts" width="100%">
+
+<img src="./Client/docs/screenshots/EM-desktop-3.png" alt="Employee Manager Dashboard Overview" width="100%">
 
 ## Project Structure
 
-```bash
+```text
 EmployeeManager/
 ├── API/
 │   ├── src/
@@ -85,43 +145,73 @@ EmployeeManager/
 
 ### Prerequisites
 
-- Node.js 18+
-- npm or yarn
+- Node.js and npm
+- .NET SDK compatible with the API project
+- SQL Server or SQL Server Express
+- Visual Studio or another compatible IDE
 
-### Install dependencies
+### 1. Clone the Repository
 
 ```bash
+git clone <repository-url>
+cd EmployeeManager
+```
+
+### 2. Configure the Backend
+
+Navigate to the API project:
+
+```bash
+cd API/src/EmployeeManager.Api
+```
+
+Configure your SQL Server connection string in `appsettings.json` or through user secrets.
+
+Apply the Entity Framework Core migrations using the appropriate startup and infrastructure projects.
+
+### 3. Run the Backend
+
+```bash
+dotnet run
+```
+
+The API must be running before the frontend can retrieve employee data.
+
+### 4. Install Frontend Dependencies
+
+From the repository root:
+
+```bash
+cd Client
 npm install
 ```
 
-### Run the app locally
+### 5. Run the Frontend
 
 ```bash
 npm run dev
 ```
 
-This will start the Vite development server, typically at:
+The Vite development server will typically start at:
 
-```bash
+```text
 http://localhost:5173
 ```
 
-### Build for production
+### 6. Build the Frontend
 
 ```bash
 npm run build
 ```
 
-### Preview production build
+## Future Improvements
 
-```bash
-npm run preview
-```
-
-## Notes
-
-This project currently uses mocked employee and dashboard data to simulate a real HR analytics interface. It is designed as a frontend dashboard and does not include a backend or persistent database yet.
+- Employee editing and deletion through the user interface
+- Expanded department and job position management
+- Additional dashboard analytics
+- Improved form validation and error handling
+- Authentication and authorization
 
 ## License
 
-This project is for demonstration and learning purposes.
+This project was developed for learning, portfolio, and demonstration purposes.
