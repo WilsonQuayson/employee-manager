@@ -36,26 +36,49 @@ A modern employee management dashboard built with React, TypeScript, Vite, Tailw
 ## Project Structure
 
 ```bash
-Client/
-├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── layouts/
-│   ├── pages/
-│   ├── router/
-│   ├── data.ts
-│   ├── main.tsx
-│   └── index.css
-├── docs/
-│   └── screenshots/
-├── package.json
-├── vite.config.ts
-├── tailwind.config.cjs
-├── tsconfig.json
-├── eslint.config.js
-├── README.md
-└── index.html
+EmployeeManager/
+├── API/
+│   ├── src/
+│   │   ├── EmployeeManager.Api/
+│   │   │   ├── Controllers/
+│   │   │   ├── Program.cs
+│   │   │   └── appsettings.json
+│   │   │
+│   │   ├── EmployeeManager.Application/
+│   │   │   ├── DTOs/
+│   │   │   ├── Interfaces/
+│   │   │   └── Services/
+│   │   │
+│   │   ├── EmployeeManager.Domain/
+│   │   │   ├── Entities/
+│   │   │   └── Enums/
+│   │   │
+│   │   └── EmployeeManager.Infrastructure/
+│   │       ├── Data/
+│   │       ├── Repositories/
+│   │       └── Migrations/
+│   │
+│   └── EmployeeManager.sln
+│
+├── Client/
+│   ├── public/
+│   ├── src/
+│   │   ├── api/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   ├── layouts/
+│   │   ├── pages/
+│   │   ├── router/
+│   │   ├── types/
+│   │   ├── main.tsx
+│   │   └── index.css
+│   ├── docs/
+│   │   └── screenshots/
+│   ├── package.json
+│   ├── vite.config.ts
+│   ├── tsconfig.json
+│   ├── eslint.config.js
+│   └── index.html
 ```
 
 ## Getting Started
