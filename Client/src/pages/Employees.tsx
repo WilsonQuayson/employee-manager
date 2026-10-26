@@ -1,23 +1,85 @@
 import { ChevronDown } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import EmployeeTable from "../components/EmployeeTable";
-import { getEmployees } from "../api/employeeApi";
-import type { EmployeeResponse } from "../types/employee";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getEmployees, createEmployee } from "../api/employeeApi";
+import type { EmployeeRequest, EmployeeResponse } from "../types/employee";
 import Breadcrumb from "../components/Breadcrumb";
+import EmployeeModal from "../components/EmployeeModal";
+import { getDepartments } from "../api/departmentApi";
+import { getJobPositions } from "../api/jobPositionApi";
+import { toast } from "sonner";
+
 
 const PAGE_SIZE = 7;
 
 export default function Employees() {
+
+    /* -------------------- State -------------------- */
+
     const [search, setSearch] = useState("");
     const [department, setDepartment] = useState("all");
     const [status, setStatus] = useState("all");
     const [page, setPage] = useState(1);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+
+    /* -------------------- GET Employees -------------------- */
 
     const {
         data: employees = [],
-        isPending, isError
-    } = useQuery<EmployeeResponse[]>({queryKey: ["employees"],queryFn: getEmployees,});
+        isPending,
+        isError
+    } = useQuery<EmployeeResponse[]>({
+        queryKey: ["employees"],
+        queryFn: getEmployees
+    });
+
+
+    /* -------------------- GET Departments -------------------- */
+
+    const {
+        data: departmentsData = [],
+        isPending: isDepartmentsPending,
+        isError: isDepartmentsError
+    } = useQuery({
+        queryKey: ["departments"],
+        queryFn: getDepartments
+    });
+
+
+    /* -------------------- GET Job Positions -------------------- */
+
+    const {
+        data: jobPositionsData = [],
+        isPending: isJobPositionsPending,
+        isError: isJobPositionsError
+    } = useQuery({
+        queryKey: ["jobPositions"],
+        queryFn: getJobPositions
+    });
+
+    /* -------------------- POST Employee -------------------- */
+
+    const queryClient = useQueryClient();
+
+    const {
+        mutate: addEmployee,
+        isPending: isCreating
+    } = useMutation({
+        mutationFn: createEmployee,
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ["employees"]});
+            setIsModalOpen(false);
+            toast.success("Employee created successfully!");
+        },
+        onError: (error) => {
+            toast.error("Failed to create employee.");
+        }
+    });
+
+
+    /* -------------------- Filtering & Pagination -------------------- */
 
     const departmentCount = new Set(employees.map(employee => employee.departmentId)).size;
 
@@ -41,6 +103,9 @@ export default function Employees() {
     const currentPage = Math.min(page, totalPages);
     const visibleEmployees = filteredEmployees.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
+
+    /* -------------------- Handlers -------------------- */
+
     function resetFilters() {
         setSearch("");
         setDepartment("all");
@@ -48,17 +113,42 @@ export default function Employees() {
         setPage(1);
     }
 
-    if (isPending) return <p className="p-6 text-slate-500">Loading employees...</p>;
-    if (isError) return <p className="p-6 text-red-600">Failed to load employees.</p>;
+    function handleAddEmployee(employee: EmployeeRequest) { // WIP
+        addEmployee(employee);
+    }
+
+
+    /* -------------------- Loading & Error States -------------------- */
+
+    if (isPending || isDepartmentsPending || isJobPositionsPending) {
+        return <p className="p-6 text-slate-500">Loading data...</p>;
+    }
+
+    if (isError || isDepartmentsError || isJobPositionsError) {
+        return <p className="p-6 text-red-600">Failed to load data.</p>;
+    }
+
+
+    /* -------------------- JSX -------------------- */
 
     return (
         <section className="p-4 sm:p-6 lg:p-8 h-full overflow-y-hidden">
-            <section>
-                <Breadcrumb page="Employees" />
-                <h1 className="font-medium text-4xl">Employees</h1>
-                <p className="pt-2 text-ring">
-                    {employees.length} people across {departmentCount} departments
-                </p>
+            <section className="flex justify-between">
+                <div>
+                    <Breadcrumb page="Employees" />
+                    <h1 className="font-medium text-4xl">Employees</h1>
+                    <p className="pt-2 text-ring">
+                        {employees.length} people across {departmentCount} departments
+                    </p>
+                </div>
+                <div className="mt-auto">
+                    <button className="bg-emerald-600 px-4 py-1 rounded-2xl text-white flex gap-2 hover:cursor-pointer" onClick={() => setIsModalOpen(true)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Add employee
+                    </button>
+                </div>
             </section>
             <section className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                 <div className="p-5">
@@ -143,6 +233,16 @@ export default function Employees() {
                     </div>
                 </div>
             </section>
+            {isModalOpen && (
+                <EmployeeModal
+                    mode="create"
+                    onClose={() => setIsModalOpen(false)}
+                    onSubmit={handleAddEmployee}
+                    isPending={isCreating}
+                    departments={departmentsData}
+                    jobPositions={jobPositionsData}
+                />
+            )}
         </section>
     );
 }

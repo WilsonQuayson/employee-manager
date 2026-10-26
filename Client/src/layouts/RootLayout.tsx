@@ -2,6 +2,7 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import SideNav from "../components/SideNav"
 import TopNav from "../components/TopNav";
+import { Toaster } from "sonner";
 
 const RootLayout: React.FC = () => {
   return (
@@ -9,6 +10,13 @@ const RootLayout: React.FC = () => {
       <SideNav />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopNav />
+        <Toaster
+            position="top-center"
+            offset={80}
+            duration={3000}
+            closeButton
+            richColors
+        />
         <main className="min-h-0 flex-1 overflow-y-auto px-16 ">
           <Outlet />
         </main>

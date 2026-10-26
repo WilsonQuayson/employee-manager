@@ -4,6 +4,7 @@ import RootLayout from "../layouts/RootLayout";
 import Home from "../pages/Home";
 import Employees from "../pages/Employees";
 import NotFound from "../pages/NotFound";
+import Departments from "../pages/Departments";
 
 export const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ export const router = createBrowserRouter([
       {
         path: "employees",
         element: <Employees />,
+      },
+      {
+        path: "departments",
+        element: <Departments />,
       },
     ],
   },
