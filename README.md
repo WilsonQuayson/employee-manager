@@ -29,6 +29,9 @@ A modern employee management dashboard built with React, TypeScript, Vite, Tailw
 <p>
   <img src="./Client/docs/screenshots/EM-desktop-2.png" alt="Desktop View" width="100%">
 </p>
+<p>
+  <img src="./Client/docs/screenshots/EM-desktop-3.png" alt="Desktop View" width="100%">
+</p>
 
 ## Project Structure
 
