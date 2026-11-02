@@ -1,8 +1,11 @@
-
+import EmployeeActions from "./EmployeeActions";
 import type { EmployeeResponse } from "../types/employee";
 
 interface EmployeeTableProps {
     employees: EmployeeResponse[];
+    onView: (employee: EmployeeResponse) => void;
+    onEdit: (employee: EmployeeResponse) => void;
+    onDelete: (employee: EmployeeResponse) => void;
 }
 
 const statusStyles: Record<number, string> = {
@@ -17,7 +20,7 @@ const statusLabels: Record<number, string> = {
     2: "Offboarded",
 };
 
-export default function EmployeeTable({ employees }: EmployeeTableProps) {
+export default function EmployeeTable({ employees, onView, onEdit, onDelete }: EmployeeTableProps) {
     return (
         <div className="w-full overflow-x-auto">
             <table className="w-full min-w-225 text-left text-sm">
@@ -59,9 +62,12 @@ export default function EmployeeTable({ employees }: EmployeeTableProps) {
                                 {employee.hireDate.slice(0, 10)}
                             </td>
                             <td className="px-5 py-3 text-right">
-                                <button type="button" className="rounded-lg px-2 py-1 text-lg text-slate-700 hover:bg-slate-100" aria-label={`Actions for ${employee.firstName} ${employee.lastName}`}>
-                                    ⋯
-                                </button>
+                                <EmployeeActions
+                                    employee={employee}
+                                    onView={onView}
+                                    onEdit={onEdit}
+                                    onDelete={onDelete}
+                                />
                             </td>
                         </tr>
                     ))}

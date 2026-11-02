@@ -2,13 +2,14 @@ import { ChevronDown } from "lucide-react";
 import { useMemo, useState } from "react";
 import EmployeeTable from "../components/EmployeeTable";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getEmployees, createEmployee } from "../api/employeeApi";
+import { getEmployees, createEmployee, updateEmployee, deleteEmployee } from "../api/employeeApi";
 import type { EmployeeRequest, EmployeeResponse } from "../types/employee";
 import Breadcrumb from "../components/Breadcrumb";
 import EmployeeModal from "../components/EmployeeModal";
 import { getDepartments } from "../api/departmentApi";
 import { getJobPositions } from "../api/jobPositionApi";
 import { toast } from "sonner";
+import DeleteEmployeeDialog from "../components/DeleteEmployeeDialog";
 
 
 const PAGE_SIZE = 7;
@@ -22,6 +23,8 @@ export default function Employees() {
     const [status, setStatus] = useState("all");
     const [page, setPage] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedEmployee, setSelectedEmployee] = useState<EmployeeResponse | null>(null);
+    const [employeeToDelete, setEmployeeToDelete] = useState<EmployeeResponse | null>(null);
 
 
     /* -------------------- GET Employees -------------------- */
@@ -73,8 +76,43 @@ export default function Employees() {
             setIsModalOpen(false);
             toast.success("Employee created successfully!");
         },
-        onError: (error) => {
+        onError: () => {
             toast.error("Failed to create employee.");
+        }
+    });
+
+    /* -------------------- PUT Employee -------------------- */
+
+    const {
+        mutate: editEmployee,
+        isPending: isUpdating
+    } = useMutation({
+        mutationFn: ({ id, employee }: { id: number; employee: EmployeeRequest }) =>
+            updateEmployee(id, employee),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["employees"] });
+            setSelectedEmployee(null);
+            toast.success("Employee updated successfully!");
+        },
+        onError: () => {
+            toast.error("Failed to update employee.");
+        }
+    });
+
+    /* -------------------- DELETE Employee -------------------- */
+
+    const {
+        mutate: removeEmployee,
+        isPending: isDeleting
+    } = useMutation({
+        mutationFn: deleteEmployee,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["employees"] });
+            setEmployeeToDelete(null);
+            toast.success("Employee deleted successfully!");
+        },
+        onError: () => {
+            toast.error("Failed to delete employee.");
         }
     });
 
@@ -117,6 +155,27 @@ export default function Employees() {
         addEmployee(employee);
     }
 
+    function handleEdit(employee: EmployeeResponse) {
+        setSelectedEmployee(employee);
+    }
+
+    function handleUpdateEmployee(employee: EmployeeRequest) {
+        if (!selectedEmployee) return;
+
+        editEmployee({
+            id: selectedEmployee.id,
+            employee
+        });
+    }
+
+    function handleDelete(employee: EmployeeResponse) {
+        setEmployeeToDelete(employee);
+    }
+
+    function handleConfirmDelete() {
+        if (!employeeToDelete) return;
+        removeEmployee(employeeToDelete.id);
+    }
 
     /* -------------------- Loading & Error States -------------------- */
 
@@ -127,7 +186,11 @@ export default function Employees() {
     if (isError || isDepartmentsError || isJobPositionsError) {
         return <p className="p-6 text-red-600">Failed to load data.</p>;
     }
+    
+    /* -------------------- Styles -------------------- */
 
+    const inputStyle = "w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10";
+    const selectStyle = `${inputStyle} appearance-none pr-10`;
 
     /* -------------------- JSX -------------------- */
 
@@ -163,14 +226,14 @@ export default function Employees() {
                             value={search}
                             onChange={e => { setSearch(e.target.value); setPage(1); }}
                             placeholder="Search by name, email or role..."
-                            className="min-w-60 flex-1 rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-700 shadow-sm outline-none focus:border-indigo-400"
+                            className={`${inputStyle} min-w-60 flex-1 w-auto!`}
                         />
 
                         <div className="relative">
                             <select
                                 value={department}
                                 onChange={e => { setDepartment(e.target.value); setPage(1); }}
-                                className="appearance-none rounded-xl border border-slate-200 bg-white pl-4 pr-10 py-2.5 text-sm text-slate-700 shadow-sm"
+                                className={`${selectStyle}`}
                             >
                                 <option value="all">All departments</option>
                                 {departments.map(name => (
@@ -187,7 +250,7 @@ export default function Employees() {
                             <select
                                 value={status}
                                 onChange={e => { setStatus(e.target.value); setPage(1); }}
-                                className="appearance-none rounded-xl border border-slate-200 bg-white pl-4 pr-10 py-2.5 text-sm text-slate-700 shadow-sm"
+                                className={`${selectStyle}`}
                             >
                                 <option value="all">Any status</option>
                                 <option value="0">Active</option>
@@ -207,7 +270,12 @@ export default function Employees() {
                     </div>
                 </div>
 
-                <EmployeeTable employees={visibleEmployees} />
+                <EmployeeTable
+                    employees={visibleEmployees}
+                    onView={employee => console.log("View:", employee)}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                />
 
                 <div className="flex items-center justify-between border-t border-slate-200 px-5 py-4 text-sm">
                     <p className="text-slate-500">
@@ -241,6 +309,26 @@ export default function Employees() {
                     isPending={isCreating}
                     departments={departmentsData}
                     jobPositions={jobPositionsData}
+                />
+            )}
+            {selectedEmployee && (
+                <EmployeeModal
+                    key={selectedEmployee.id}
+                    mode="edit"
+                    employee={selectedEmployee}
+                    departments={departmentsData}
+                    jobPositions={jobPositionsData}
+                    onClose={() => setSelectedEmployee(null)}
+                    onSubmit={handleUpdateEmployee}
+                    isPending={isUpdating}
+                />
+            )}
+            {employeeToDelete && (
+                <DeleteEmployeeDialog
+                    employee={employeeToDelete}
+                    onClose={() => setEmployeeToDelete(null)}
+                    onConfirm={handleConfirmDelete}
+                    isPending={isDeleting}
                 />
             )}
         </section>

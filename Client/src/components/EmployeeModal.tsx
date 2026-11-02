@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import type { EmployeeRequest, EmployeeResponse } from "../types/employee";
 import type { DepartmentResponse } from "../types/department";
 import type { JobPositionResponse } from "../types/jobpositions";
@@ -14,15 +14,7 @@ interface EmployeeModalProps {
     isPending: boolean;
 }
 
-const EmployeeModal = ({
-    mode,
-    employee,
-    departments,
-    jobPositions,
-    onClose,
-    onSubmit,
-    isPending
-}: EmployeeModalProps) => {
+const EmployeeModal = ({mode, employee, departments, jobPositions, onClose, onSubmit, isPending}: EmployeeModalProps) => {
 
     /* -------------------- Form State -------------------- */
 
@@ -55,6 +47,7 @@ const EmployeeModal = ({
 
     const inputStyle = "w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10";
     const labelStyle = "mb-1.5 block text-sm font-medium text-slate-700";
+    const selectStyle = `${inputStyle} appearance-none pr-10`;
 
     /* -------------------- JSX -------------------- */
 
@@ -185,42 +178,52 @@ const EmployeeModal = ({
                             />
                         </div>
 
+                        
+                        
                         {/* Department */}
                         <div>
                             <label htmlFor="employee-department" className={labelStyle}>Department</label>
-                            <select
-                                id="employee-department"
-                                required
-                                value={formData.departmentId}
-                                onChange={e => updateField("departmentId", Number(e.target.value))}
-                                className={inputStyle}
-                            >
-                                <option value={0} disabled>Select department</option>
-                                {departments.map(dept => (
-                                    <option key={dept.id} value={dept.id}>
-                                        {dept.name}
-                                    </option>
-                                ))}
-                            </select>
+                            <div className="relative">
+                                <select
+                                    id="employee-department"
+                                    required
+                                    value={formData.departmentId}
+                                    onChange={e => updateField("departmentId", Number(e.target.value))}
+                                    className={`${selectStyle}`}
+                                >
+                                    <option value={0} disabled>Select department</option>
+                                    {departments.map(dept => (
+                                        <option key={dept.id} value={dept.id}>{dept.name}</option>
+                                    ))}
+                                </select>
+                                <ChevronDown
+                                    size={16}
+                                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
+                                />
+                            </div>
                         </div>
 
                         {/* Job Position */}
                         <div>
                             <label htmlFor="employee-position" className={labelStyle}>Job Position</label>
-                            <select
-                                id="employee-position"
-                                required
-                                value={formData.jobPositionId}
-                                onChange={e => updateField("jobPositionId", Number(e.target.value))}
-                                className={inputStyle}
-                            >
-                                <option value={0} disabled>Select position</option>
-                                {jobPositions.map(position => (
-                                    <option key={position.id} value={position.id}>
-                                        {position.title}
-                                    </option>
-                                ))}
-                            </select>
+                            <div className="relative">
+                                <select
+                                    id="employee-position"
+                                    required
+                                    value={formData.jobPositionId}
+                                    onChange={e => updateField("jobPositionId", Number(e.target.value))}
+                                    className={`${selectStyle}`}
+                                >
+                                    <option value={0} disabled>Select position</option>
+                                    {jobPositions.map(position => (
+                                        <option key={position.id} value={position.id}>{position.title}</option>
+                                    ))}
+                                </select>
+                                <ChevronDown
+                                    size={16}
+                                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
+                                />
+                            </div>
                         </div>
 
                         {/* Salary */}
@@ -241,17 +244,24 @@ const EmployeeModal = ({
                         {/* Status */}
                         <div>
                             <label htmlFor="employee-status" className={labelStyle}>Employment Status</label>
-                            <select
-                                id="employee-status"
-                                value={formData.status}
-                                onChange={e => updateField("status", Number(e.target.value))}
-                                className={inputStyle}
-                            >
-                                <option value={0}>Active</option>
-                                <option value={1}>On Leave</option>
-                                <option value={2}>Offboarded</option>
-                            </select>
+                            <div className="relative">
+                                <select
+                                    id="employee-status"
+                                    value={formData.status}
+                                    onChange={e => updateField("status", Number(e.target.value))}
+                                    className={`${selectStyle}`}
+                                >
+                                    <option value={0}>Active</option>
+                                    <option value={1}>On Leave</option>
+                                    <option value={2}>Offboarded</option>
+                                </select>
+                                <ChevronDown
+                                    size={16}
+                                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
+                                />
+                            </div>
                         </div>
+
                     </div>
 
                     {/* -------------------- Footer -------------------- */}
