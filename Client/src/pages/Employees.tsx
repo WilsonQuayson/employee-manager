@@ -10,6 +10,7 @@ import { getDepartments } from "../api/departmentApi";
 import { getJobPositions } from "../api/jobPositionApi";
 import { toast } from "sonner";
 import DeleteEmployeeDialog from "../components/DeleteEmployeeDialog";
+import { useNavigate } from "react-router-dom";
 
 
 const PAGE_SIZE = 7;
@@ -17,6 +18,8 @@ const PAGE_SIZE = 7;
 export default function Employees() {
 
     /* -------------------- State -------------------- */
+
+    const navigate = useNavigate();
 
     const [search, setSearch] = useState("");
     const [department, setDepartment] = useState("all");
@@ -272,7 +275,7 @@ export default function Employees() {
 
                 <EmployeeTable
                     employees={visibleEmployees}
-                    onView={employee => console.log("View:", employee)}
+                    onView={employee => navigate(`/employees/${employee.id}`)}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
                 />

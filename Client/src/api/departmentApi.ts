@@ -62,6 +62,6 @@ export async function deleteDepartment(id: number): Promise<void> {
     });
 
     if (!response.ok) {
-        throw new Error("Failed to delete employee");
+        throw new Error("Failed to delete department");
     }
 }

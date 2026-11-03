@@ -5,6 +5,7 @@ import Home from "../pages/Home";
 import Employees from "../pages/Employees";
 import NotFound from "../pages/NotFound";
 import Departments from "../pages/Departments";
+import EmployeeDetails from "../pages/EmployeeDetails";
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
         path: "departments",
         element: <Departments />,
       },
+      {
+        path: "employees/:id",
+        element: <EmployeeDetails />
+      }
     ],
   },
 ]);

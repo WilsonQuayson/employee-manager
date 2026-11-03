@@ -13,8 +13,6 @@ const menuItemsOne = [
 ];
 
 const menuItemsTwo = [
-    { label: "Payroll", icon: WalletIcon, to: "#" },
-    { label: "Reports", icon: ReportsIcon, to: "#" },
     { label: "Settings", icon: SettingsIcon, to: "#" }
 ];
 
