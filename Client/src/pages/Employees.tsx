@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import EmployeeTable from "../components/EmployeeTable";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -208,10 +208,12 @@ export default function Employees() {
                     </p>
                 </div>
                 <div className="mt-auto">
-                    <button className="bg-emerald-600 px-4 py-1 rounded-2xl text-white flex gap-2 hover:cursor-pointer" onClick={() => setIsModalOpen(true)}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
+                    <button
+                        type="button"
+                        onClick={() => setIsModalOpen(true)}
+                        className="flex h-10 min-w-45 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 text-sm font-medium text-white hover:bg-emerald-700"
+                    >
+                        <Plus size={16} />
                         Add employee
                     </button>
                 </div>

@@ -9,7 +9,7 @@ import NavItem from "./NavItem";
 const menuItemsOne = [
     { label: "Dashboard", icon: WindowIcon, to: "/" },
     { label: "Employees", icon: EmployeesIcon, to: "employees" },
-    { label: "Departments", icon: DepartmentsIcon, to: "#" }
+    { label: "Departments", icon: DepartmentsIcon, to: "departments" }
 ];
 
 const menuItemsTwo = [
