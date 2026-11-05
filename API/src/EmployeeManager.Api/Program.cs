@@ -12,7 +12,7 @@ namespace EmployeeManager.Api
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -118,7 +118,13 @@ namespace EmployeeManager.Api
 
             app.MapControllers();
 
-            app.Run();
+            if (app.Environment.IsDevelopment())
+            {
+                using var scope = app.Services.CreateScope();
+                await DevelopmentSeeder.SeedAsync(scope.ServiceProvider, app.Configuration);
+            }
+
+            await app.RunAsync();
         }
     }
 }
