@@ -2,11 +2,6 @@
 using EmployeeManager.Application.Interfaces;
 using EmployeeManager.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EmployeeManager.Infrastructure.Repositories
 {
@@ -19,50 +14,55 @@ namespace EmployeeManager.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<int> GetTotalEmployeesAsync()
+        public async Task<int> GetTotalEmployeesAsync(int organizationId)
         {
-            return await _context.Employees.CountAsync();
+            return await _context.Employees
+                .CountAsync(e => e.OrganizationId == organizationId);
         }
 
-        public async Task<decimal> GetAverageSalaryAsync()
+        public async Task<decimal> GetAverageSalaryAsync(int organizationId)
         {
-            if (!await _context.Employees.AnyAsync())
-            {
-                return 0;
-            }
-
-            return await _context.Employees.AverageAsync(e => e.Salary);
+            return await _context.Employees
+                .Where(e => e.OrganizationId == organizationId)
+                .AverageAsync(e => (decimal?)e.Salary) ?? 0;
         }
 
-        public async Task<int> GetTotalDepartmentsAsync()
-        {
-            return await _context.Departments.CountAsync();
-        }
-
-        public async Task<int> GetNewHiresThisMonthAsync()
-        {
-            var now = DateTime.UtcNow;
-
-            return await _context.Employees.CountAsync(e =>
-                e.HireDate.Year == now.Year &&
-                e.HireDate.Month == now.Month);
-        }
-
-        public async Task<List<DepartmentCountDto>> GetEmployeesByDepartmentAsync()
+        public async Task<int> GetTotalDepartmentsAsync(int organizationId)
         {
             return await _context.Departments
-                .Where(d => d.Employees.Any())
+                .CountAsync(d => d.OrganizationId == organizationId);
+        }
+
+        public async Task<int> GetNewHiresThisMonthAsync(int organizationId)
+        {
+            var now = DateTime.UtcNow;
+            var startOfMonth = new DateTime(now.Year, now.Month, 1);
+            var startOfNextMonth = startOfMonth.AddMonths(1);
+
+            return await _context.Employees.CountAsync(e =>
+                e.OrganizationId == organizationId &&
+                e.HireDate >= startOfMonth &&
+                e.HireDate < startOfNextMonth);
+        }
+
+        public async Task<List<DepartmentCountDto>> GetEmployeesByDepartmentAsync(int organizationId)
+        {
+            return await _context.Departments
+                .Where(d =>
+                    d.OrganizationId == organizationId &&
+                    d.Employees.Any(e => e.OrganizationId == organizationId))
                 .Select(d => new DepartmentCountDto
                 {
                     Department = d.Name,
-                    Count = d.Employees.Count
+                    Count = d.Employees.Count(e => e.OrganizationId == organizationId)
                 })
                 .ToListAsync();
         }
 
-        public async Task<List<StatusCountDto>> GetEmployeesByStatusAsync()
+        public async Task<List<StatusCountDto>> GetEmployeesByStatusAsync(int organizationId)
         {
             return await _context.Employees
+                .Where(e => e.OrganizationId == organizationId)
                 .GroupBy(e => e.Status)
                 .Select(g => new StatusCountDto
                 {
@@ -72,18 +72,15 @@ namespace EmployeeManager.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<MonthlyHireDto>> GetMonthlyHiresAsync()
+        public async Task<List<MonthlyHireDto>> GetMonthlyHiresAsync(int organizationId)
         {
-            var startDate = DateTime.UtcNow
-                .AddMonths(-7);
-
-            startDate = new DateTime(
-                startDate.Year,
-                startDate.Month,
-                1);
+            var startDate = DateTime.UtcNow.AddMonths(-7);
+            startDate = new DateTime(startDate.Year, startDate.Month, 1);
 
             var hires = await _context.Employees
-                .Where(e => e.HireDate >= startDate)
+                .Where(e =>
+                    e.OrganizationId == organizationId &&
+                    e.HireDate >= startDate)
                 .GroupBy(e => new
                 {
                     e.HireDate.Year,
@@ -118,17 +115,13 @@ namespace EmployeeManager.Infrastructure.Repositories
                 .ToList();
         }
 
-        public async Task<List<EmployeeGrowthDto>> GetEmployeeGrowthAsync()
+        public async Task<List<EmployeeGrowthDto>> GetEmployeeGrowthAsync(int organizationId)
         {
-            var startDate = DateTime.UtcNow
-                .AddMonths(-7);
-
-            startDate = new DateTime(
-                startDate.Year,
-                startDate.Month,
-                1);
+            var startDate = DateTime.UtcNow.AddMonths(-7);
+            startDate = new DateTime(startDate.Year, startDate.Month, 1);
 
             var employees = await _context.Employees
+                .Where(e => e.OrganizationId == organizationId)
                 .Select(e => e.HireDate)
                 .ToListAsync();
 
@@ -148,19 +141,19 @@ namespace EmployeeManager.Infrastructure.Repositories
                 .ToList();
         }
 
-        public async Task<List<SalaryBandDto>> GetSalaryBandsByPositionAsync()
+        public async Task<List<SalaryBandDto>> GetSalaryBandsByPositionAsync(int organizationId)
         {
             return await _context.JobPositions
                 .AsNoTracking()
+                .Where(j => j.OrganizationId == organizationId)
                 .Select(j => new SalaryBandDto
                 {
                     Position = j.Title,
                     MinimumSalary = j.MinimumSalary,
                     MaximumSalary = j.MaximumSalary,
-                    AverageSalary = j.Employees.Any()
-                        ? Math.Round(
-                            j.Employees.Average(e => (decimal?)e.Salary)!.Value, 0)
-                        : null
+                    AverageSalary = j.Employees
+                        .Where(e => e.OrganizationId == organizationId)
+                        .Average(e => (decimal?)e.Salary)
                 })
                 .ToListAsync();
         }

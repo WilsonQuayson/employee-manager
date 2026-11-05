@@ -15,13 +15,14 @@ namespace EmployeeManager.Domain.Entities
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string? PhoneNumber { get; set; }
-
         public DateTime DateOfBirth { get; set; }
         public DateTime HireDate { get; set; }
-
         public EmployeeStatus Status { get; set; }
-
         public decimal Salary { get; set; }
+
+
+        public int OrganizationId { get; set; }
+        public Organization Organization { get; set; } = null!;
 
         public int DepartmentId { get; set; }
         public Department Department { get; set; } = null!;

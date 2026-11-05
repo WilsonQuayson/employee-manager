@@ -3,11 +3,6 @@ using EmployeeManager.Application.DTOs.Employee.Response;
 using EmployeeManager.Application.Exceptions;
 using EmployeeManager.Application.Interfaces;
 using EmployeeManager.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EmployeeManager.Application.Services
 {
@@ -16,28 +11,29 @@ namespace EmployeeManager.Application.Services
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IDepartmentRepository _departmentRepository;
         private readonly IJobPositionRepository _jobPositionRepository;
+        private readonly ICurrentOrganization _currentOrganization;
 
-        public EmployeeService(IEmployeeRepository employeeRepository,IDepartmentRepository departmentRepository,IJobPositionRepository jobPositionRepository)
+        public EmployeeService(IEmployeeRepository employeeRepository, IDepartmentRepository departmentRepository, IJobPositionRepository jobPositionRepository, ICurrentOrganization currentOrganization)
         {
             _employeeRepository = employeeRepository;
             _departmentRepository = departmentRepository;
             _jobPositionRepository = jobPositionRepository;
+            _currentOrganization = currentOrganization;
         }
-
 
         public async Task<List<EmployeeResponseDto>> GetAllAsync()
         {
-            var employees = await _employeeRepository.GetAllAsync();
+            var organizationId = await _currentOrganization.GetOrganizationIdAsync();
+            var employees = await _employeeRepository.GetAllAsync(organizationId);
 
-            return employees
-                .Select(MapToResponseDto)
-                .ToList();
+            return employees.Select(MapToResponseDto).ToList();
         }
 
 
         public async Task<EmployeeResponseDto?> GetByIdAsync(int id)
         {
-            var employee = await _employeeRepository.GetByIdAsync(id);
+            var organizationId = await _currentOrganization.GetOrganizationIdAsync();
+            var employee = await _employeeRepository.GetByIdAsync(id, organizationId);
 
             if (employee == null)
             {
@@ -47,24 +43,25 @@ namespace EmployeeManager.Application.Services
             return MapToResponseDto(employee);
         }
 
-
         public async Task<EmployeeResponseDto> CreateAsync(EmployeeRequestDto request)
         {
-            var department = await _departmentRepository.GetByIdAsync(request.DepartmentId);
+            var organizationId = await _currentOrganization.GetOrganizationIdAsync();
+
+            var department = await _departmentRepository.GetByIdAsync(request.DepartmentId, organizationId);
 
             if (department == null)
             {
-                throw new BadRequestException($"Department with ID {request.DepartmentId} does not exist.");
+                throw new BadRequestException("Invalid department.");
             }
 
-            var jobPosition = await _jobPositionRepository.GetByIdAsync(request.JobPositionId);
+            var jobPosition = await _jobPositionRepository.GetByIdAsync(request.JobPositionId, organizationId);
 
             if (jobPosition == null)
             {
-                throw new BadRequestException($"Job position with ID {request.JobPositionId} does not exist.");
+                throw new BadRequestException("Invalid job position.");
             }
 
-            var emailExists = await _employeeRepository.EmailExistsAsync(request.Email);
+            var emailExists = await _employeeRepository.EmailExistsAsync(request.Email, organizationId);
 
             if (emailExists)
             {
@@ -73,7 +70,7 @@ namespace EmployeeManager.Application.Services
 
             if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
             {
-                var phoneNumberExists = await _employeeRepository.PhoneNumberExistsAsync(request.PhoneNumber);
+                var phoneNumberExists = await _employeeRepository.PhoneNumberExistsAsync(request.PhoneNumber, organizationId);
 
                 if (phoneNumberExists)
                 {
@@ -81,9 +78,10 @@ namespace EmployeeManager.Application.Services
                 }
             }
 
-
             var employee = new Employee
             {
+                OrganizationId = organizationId,
+
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Email = request.Email,
@@ -99,38 +97,36 @@ namespace EmployeeManager.Application.Services
                 JobPositionId = request.JobPositionId
             };
 
-            var createdEmployee =
-                await _employeeRepository.CreateAsync(employee);
+            var createdEmployee = await _employeeRepository.CreateAsync(employee);
 
             return MapToResponseDto(createdEmployee);
         }
 
-
         public async Task<bool> UpdateAsync(int id, EmployeeRequestDto request)
         {
-            var employee = await _employeeRepository.GetByIdAsync(id);
+            var organizationId = await _currentOrganization.GetOrganizationIdAsync();
+            var employee = await _employeeRepository.GetByIdAsync(id, organizationId);
 
             if (employee == null)
             {
                 return false;
             }
 
-
-            var department = await _departmentRepository.GetByIdAsync(request.DepartmentId);
+            var department = await _departmentRepository.GetByIdAsync(request.DepartmentId, organizationId);
 
             if (department == null)
             {
-                throw new BadRequestException($"Department with ID {request.DepartmentId} does not exist.");
+                throw new BadRequestException("Invalid department.");
             }
 
-            var jobPosition = await _jobPositionRepository.GetByIdAsync(request.JobPositionId);
+            var jobPosition = await _jobPositionRepository.GetByIdAsync(request.JobPositionId, organizationId);
 
             if (jobPosition == null)
             {
-                throw new BadRequestException($"Job position with ID {request.JobPositionId} does not exist.");
+                throw new BadRequestException("Invalid job position.");
             }
 
-            var emailExists = await _employeeRepository.EmailExistsAsync(request.Email, id);
+            var emailExists = await _employeeRepository.EmailExistsAsync(request.Email, organizationId, id);
 
             if (emailExists)
             {
@@ -139,14 +135,13 @@ namespace EmployeeManager.Application.Services
 
             if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
             {
-                var phoneNumberExists = await _employeeRepository.PhoneNumberExistsAsync(request.PhoneNumber, id);
+                var phoneNumberExists = await _employeeRepository.PhoneNumberExistsAsync(request.PhoneNumber, organizationId, id);
 
                 if (phoneNumberExists)
                 {
                     throw new ConflictException("An employee with this phone number already exists.");
                 }
             }
-
 
             employee.FirstName = request.FirstName;
             employee.LastName = request.LastName;
@@ -167,11 +162,10 @@ namespace EmployeeManager.Application.Services
             return true;
         }
 
-
         public async Task<bool> DeleteAsync(int id)
         {
-            var employee =
-                await _employeeRepository.GetByIdAsync(id);
+            var organizationId = await _currentOrganization.GetOrganizationIdAsync();
+            var employee = await _employeeRepository.GetByIdAsync(id, organizationId);
 
             if (employee == null)
             {
@@ -182,7 +176,6 @@ namespace EmployeeManager.Application.Services
 
             return true;
         }
-
 
         private static EmployeeResponseDto MapToResponseDto(Employee employee)
         {

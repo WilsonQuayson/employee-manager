@@ -1,20 +1,16 @@
-﻿using EmployeeManager.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using EmployeeManager.Domain.Entities;
 
 namespace EmployeeManager.Application.Interfaces
 {
     public interface IEmployeeRepository
     {
-        Task<List<Employee>> GetAllAsync();
-        Task<Employee?> GetByIdAsync(int id);
+        Task<List<Employee>> GetAllAsync(int organizationId);
+        Task<Employee?> GetByIdAsync(int id, int organizationId);
         Task<Employee> CreateAsync(Employee employee);
         Task UpdateAsync(Employee employee);
         Task DeleteAsync(Employee employee);
-        Task<bool> EmailExistsAsync(string email, int? excludeEmployeeId = null);
-        Task<bool> PhoneNumberExistsAsync(string phoneNumber, int? excludeEmployeeId = null);
+        Task<bool> EmailExistsAsync(string email, int organizationId, int? excludeEmployeeId = null);
+        Task<bool> PhoneNumberExistsAsync(string phoneNumber, int organizationId, int? excludeEmployeeId = null);
     }
 }

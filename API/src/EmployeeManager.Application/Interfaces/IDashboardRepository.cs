@@ -1,23 +1,18 @@
 ﻿using EmployeeManager.Application.DTOs.Dashboard;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EmployeeManager.Application.Interfaces
 {
     public interface IDashboardRepository
     {
-        Task<int> GetTotalEmployeesAsync();
-        Task<decimal> GetAverageSalaryAsync();
-        Task<int> GetTotalDepartmentsAsync();
-        Task<int> GetNewHiresThisMonthAsync();
+        Task<int> GetTotalEmployeesAsync(int organizationId);
+        Task<decimal> GetAverageSalaryAsync(int organizationId);
+        Task<int> GetTotalDepartmentsAsync(int organizationId);
+        Task<int> GetNewHiresThisMonthAsync(int organizationId);
 
-        Task<List<EmployeeGrowthDto>> GetEmployeeGrowthAsync();
-        Task<List<DepartmentCountDto>> GetEmployeesByDepartmentAsync();
-        Task<List<StatusCountDto>> GetEmployeesByStatusAsync();
-        Task<List<MonthlyHireDto>> GetMonthlyHiresAsync();
-        Task<List<SalaryBandDto>> GetSalaryBandsByPositionAsync();
+        Task<List<EmployeeGrowthDto>> GetEmployeeGrowthAsync(int organizationId);
+        Task<List<DepartmentCountDto>> GetEmployeesByDepartmentAsync(int organizationId);
+        Task<List<StatusCountDto>> GetEmployeesByStatusAsync(int organizationId);
+        Task<List<MonthlyHireDto>> GetMonthlyHiresAsync(int organizationId);
+        Task<List<SalaryBandDto>> GetSalaryBandsByPositionAsync(int organizationId);
     }
 }

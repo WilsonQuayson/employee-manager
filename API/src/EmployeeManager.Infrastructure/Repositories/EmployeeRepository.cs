@@ -1,11 +1,6 @@
 ﻿using EmployeeManager.Application.Interfaces;
 using EmployeeManager.Domain.Entities;
 using EmployeeManager.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManager.Infrastructure.Repositories
@@ -19,29 +14,31 @@ namespace EmployeeManager.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<List<Employee>> GetAllAsync()
+        public async Task<List<Employee>> GetAllAsync(int organizationId)
         {
             return await _context.Employees
+                .AsNoTracking()
                 .Include(e => e.Department)
                 .Include(e => e.JobPosition)
+                .Where(e => e.OrganizationId == organizationId)
                 .ToListAsync();
         }
 
-        public async Task<Employee?> GetByIdAsync(int id)
+        public async Task<Employee?> GetByIdAsync(int id, int organizationId)
         {
             return await _context.Employees
                 .Include(e => e.Department)
                 .Include(e => e.JobPosition)
-                .FirstOrDefaultAsync(e => e.Id == id);
+                .FirstOrDefaultAsync(e =>
+                    e.Id == id &&
+                    e.OrganizationId == organizationId);
         }
 
         public async Task<Employee> CreateAsync(Employee employee)
         {
             _context.Employees.Add(employee);
-
             await _context.SaveChangesAsync();
 
-            // Load these so the service can use their names
             await _context.Entry(employee)
                 .Reference(e => e.Department)
                 .LoadAsync();
@@ -52,6 +49,7 @@ namespace EmployeeManager.Infrastructure.Repositories
 
             return employee;
         }
+
 
         public async Task UpdateAsync(Employee employee)
         {
@@ -65,16 +63,18 @@ namespace EmployeeManager.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> EmailExistsAsync(string email, int? excludeEmployeeId = null)
+        public async Task<bool> EmailExistsAsync(string email, int organizationId,int? excludeEmployeeId = null)
         {
             return await _context.Employees.AnyAsync(e =>
+                e.OrganizationId == organizationId &&
                 e.Email == email &&
                 (!excludeEmployeeId.HasValue || e.Id != excludeEmployeeId.Value));
         }
 
-        public async Task<bool> PhoneNumberExistsAsync(string phoneNumber, int? excludeEmployeeId = null)
+        public async Task<bool> PhoneNumberExistsAsync(string phoneNumber, int organizationId, int? excludeEmployeeId = null)
         {
             return await _context.Employees.AnyAsync(e =>
+                e.OrganizationId == organizationId &&
                 e.PhoneNumber == phoneNumber &&
                 (!excludeEmployeeId.HasValue || e.Id != excludeEmployeeId.Value));
         }

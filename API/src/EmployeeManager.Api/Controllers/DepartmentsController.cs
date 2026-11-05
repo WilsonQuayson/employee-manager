@@ -2,12 +2,14 @@
 using EmployeeManager.Application.DTOs.Department.Request;
 using EmployeeManager.Application.DTOs.Department.Response;
 using EmployeeManager.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManager.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class DepartmentsController : ControllerBase
 {
     private readonly IDepartmentService _departmentService;

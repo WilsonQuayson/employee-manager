@@ -1,36 +1,37 @@
-﻿using EmployeeManager.Application.DTOs.Department.Request;
+﻿
+using EmployeeManager.Application.DTOs.Department.Request;
 using EmployeeManager.Application.DTOs.Department.Response;
 using EmployeeManager.Application.Exceptions;
 using EmployeeManager.Application.Interfaces;
 using EmployeeManager.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 
 namespace EmployeeManager.Application.Services
 {
     public class DepartmentService : IDepartmentService
     {
         private readonly IDepartmentRepository _departmentRepository;
+        private readonly ICurrentOrganization _currentOrganization;
 
-        public DepartmentService(IDepartmentRepository departmentRepository)
+        public DepartmentService(
+            IDepartmentRepository departmentRepository,
+            ICurrentOrganization currentOrganization)
         {
             _departmentRepository = departmentRepository;
+            _currentOrganization = currentOrganization;
         }
 
         public async Task<List<DepartmentResponseDto>> GetAllAsync()
         {
-            var departments = await _departmentRepository.GetAllAsync();
+            var organizationId = await _currentOrganization.GetOrganizationIdAsync();
+            var departments = await _departmentRepository.GetAllAsync(organizationId);
 
             return departments.Select(MapToResponseDto).ToList();
         }
 
         public async Task<DepartmentResponseDto?> GetByIdAsync(int id)
         {
-            var department = await _departmentRepository.GetByIdAsync(id);
+            var organizationId = await _currentOrganization.GetOrganizationIdAsync();
+            var department = await _departmentRepository.GetByIdAsync(id, organizationId);
 
             if (department == null)
             {
@@ -42,7 +43,8 @@ namespace EmployeeManager.Application.Services
 
         public async Task<DepartmentResponseDto> CreateAsync(DepartmentRequestDto request)
         {
-            var nameExists = await _departmentRepository.NameExistsAsync(request.Name);
+            var organizationId = await _currentOrganization.GetOrganizationIdAsync();
+            var nameExists = await _departmentRepository.NameExistsAsync(request.Name, organizationId);
 
             if (nameExists)
             {
@@ -51,7 +53,8 @@ namespace EmployeeManager.Application.Services
 
             var department = new Department
             {
-                Name = request.Name
+                Name = request.Name,
+                OrganizationId = organizationId
             };
 
             var createdDepartment = await _departmentRepository.CreateAsync(department);
@@ -61,14 +64,15 @@ namespace EmployeeManager.Application.Services
 
         public async Task<bool> UpdateAsync(int id, DepartmentRequestDto request)
         {
-            var department = await _departmentRepository.GetByIdAsync(id);
+            var organizationId = await _currentOrganization.GetOrganizationIdAsync();
+            var department = await _departmentRepository.GetByIdAsync(id, organizationId);
 
             if (department == null)
             {
                 return false;
             }
 
-            var nameExists = await _departmentRepository.NameExistsAsync(request.Name, id);
+            var nameExists = await _departmentRepository.NameExistsAsync(request.Name, organizationId, id);
 
             if (nameExists)
             {
@@ -84,14 +88,15 @@ namespace EmployeeManager.Application.Services
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var department = await _departmentRepository.GetByIdAsync(id);
+            var organizationId = await _currentOrganization.GetOrganizationIdAsync();
+            var department = await _departmentRepository.GetByIdAsync(id, organizationId);
 
             if (department == null)
             {
                 return false;
             }
 
-            var hasEmployees = await _departmentRepository.HasEmployeesAsync(id);
+            var hasEmployees = await _departmentRepository.HasEmployeesAsync(id, organizationId);
 
             if (hasEmployees)
             {

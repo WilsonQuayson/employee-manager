@@ -15,6 +15,9 @@ namespace EmployeeManager.Domain.Entities
         public decimal? MinimumSalary { get; set; }
         public decimal? MaximumSalary { get; set; }
 
+        public int OrganizationId { get; set; }
+        public Organization Organization { get; set; } = null!;
+
         public ICollection<Employee> Employees { get; set; } = new List<Employee>();
     }
 }

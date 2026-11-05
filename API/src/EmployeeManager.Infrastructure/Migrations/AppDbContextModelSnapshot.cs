@@ -32,38 +32,18 @@ namespace EmployeeManager.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departments");
+                    b.HasIndex("OrganizationId", "Name")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Engineering"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Sales"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Marketing"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Human Resources"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Finance"
-                        });
+                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("EmployeeManager.Domain.Entities.Employee", b =>
@@ -82,7 +62,8 @@ namespace EmployeeManager.Infrastructure.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -98,10 +79,15 @@ namespace EmployeeManager.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<decimal>("Salary")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Status")
@@ -109,363 +95,18 @@ namespace EmployeeManager.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DepartmentId");
+                    b.HasIndex("DepartmentId", "OrganizationId");
 
-                    b.HasIndex("JobPositionId");
+                    b.HasIndex("JobPositionId", "OrganizationId");
+
+                    b.HasIndex("OrganizationId", "Email")
+                        .IsUnique();
+
+                    b.HasIndex("OrganizationId", "PhoneNumber")
+                        .IsUnique()
+                        .HasFilter("[PhoneNumber] IS NOT NULL");
 
                     b.ToTable("Employees");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DateOfBirth = new DateTime(1995, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 1,
-                            Email = "emma.johnson@example.com",
-                            FirstName = "Emma",
-                            HireDate = new DateTime(2025, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 1,
-                            LastName = "Johnson",
-                            PhoneNumber = "0471000001",
-                            Salary = 3400m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            DateOfBirth = new DateTime(1992, 8, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 1,
-                            Email = "lucas.martin@example.com",
-                            FirstName = "Lucas",
-                            HireDate = new DateTime(2025, 7, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 1,
-                            LastName = "Martin",
-                            PhoneNumber = "0471000002",
-                            Salary = 3800m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            DateOfBirth = new DateTime(1998, 2, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 2,
-                            Email = "sophie.williams@example.com",
-                            FirstName = "Sophie",
-                            HireDate = new DateTime(2025, 8, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 2,
-                            LastName = "Williams",
-                            PhoneNumber = "0471000003",
-                            Salary = 2900m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 4,
-                            DateOfBirth = new DateTime(1990, 11, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 5,
-                            Email = "noah.brown@example.com",
-                            FirstName = "Noah",
-                            HireDate = new DateTime(2025, 9, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 5,
-                            LastName = "Brown",
-                            PhoneNumber = "0471000004",
-                            Salary = 3600m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 5,
-                            DateOfBirth = new DateTime(1996, 7, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 3,
-                            Email = "olivia.davis@example.com",
-                            FirstName = "Olivia",
-                            HireDate = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 3,
-                            LastName = "Davis",
-                            PhoneNumber = "0471000005",
-                            Salary = 3100m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 6,
-                            DateOfBirth = new DateTime(1993, 1, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 1,
-                            Email = "liam.wilson@example.com",
-                            FirstName = "Liam",
-                            HireDate = new DateTime(2025, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 1,
-                            LastName = "Wilson",
-                            PhoneNumber = "0471000006",
-                            Salary = 3500m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 7,
-                            DateOfBirth = new DateTime(1997, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 4,
-                            Email = "mia.anderson@example.com",
-                            FirstName = "Mia",
-                            HireDate = new DateTime(2025, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 4,
-                            LastName = "Anderson",
-                            PhoneNumber = "0471000007",
-                            Salary = 2800m,
-                            Status = 1
-                        },
-                        new
-                        {
-                            Id = 8,
-                            DateOfBirth = new DateTime(1994, 9, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 2,
-                            Email = "ethan.taylor@example.com",
-                            FirstName = "Ethan",
-                            HireDate = new DateTime(2026, 1, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 2,
-                            LastName = "Taylor",
-                            PhoneNumber = "0471000008",
-                            Salary = 3200m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 9,
-                            DateOfBirth = new DateTime(1999, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 3,
-                            Email = "charlotte.thomas@example.com",
-                            FirstName = "Charlotte",
-                            HireDate = new DateTime(2026, 2, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 3,
-                            LastName = "Thomas",
-                            PhoneNumber = "0471000009",
-                            Salary = 3000m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 10,
-                            DateOfBirth = new DateTime(1989, 6, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 1,
-                            Email = "james.moore@example.com",
-                            FirstName = "James",
-                            HireDate = new DateTime(2026, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 1,
-                            LastName = "Moore",
-                            PhoneNumber = "0471000010",
-                            Salary = 4100m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 11,
-                            DateOfBirth = new DateTime(1996, 12, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 4,
-                            Email = "amelia.jackson@example.com",
-                            FirstName = "Amelia",
-                            HireDate = new DateTime(2026, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 4,
-                            LastName = "Jackson",
-                            PhoneNumber = "0471000011",
-                            Salary = 2700m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 12,
-                            DateOfBirth = new DateTime(1991, 10, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 5,
-                            Email = "benjamin.white@example.com",
-                            FirstName = "Benjamin",
-                            HireDate = new DateTime(2026, 4, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 5,
-                            LastName = "White",
-                            PhoneNumber = "0471000012",
-                            Salary = 3900m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 13,
-                            DateOfBirth = new DateTime(1998, 6, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 3,
-                            Email = "isabella.harris@example.com",
-                            FirstName = "Isabella",
-                            HireDate = new DateTime(2026, 5, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 3,
-                            LastName = "Harris",
-                            PhoneNumber = "0471000013",
-                            Salary = 3200m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 14,
-                            DateOfBirth = new DateTime(1994, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 2,
-                            Email = "henry.clark@example.com",
-                            FirstName = "Henry",
-                            HireDate = new DateTime(2026, 5, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 2,
-                            LastName = "Clark",
-                            PhoneNumber = "0471000014",
-                            Salary = 3000m,
-                            Status = 2
-                        },
-                        new
-                        {
-                            Id = 15,
-                            DateOfBirth = new DateTime(1997, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 1,
-                            Email = "ava.lewis@example.com",
-                            FirstName = "Ava",
-                            HireDate = new DateTime(2026, 6, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 1,
-                            LastName = "Lewis",
-                            PhoneNumber = "0471000015",
-                            Salary = 3600m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 16,
-                            DateOfBirth = new DateTime(1992, 2, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 5,
-                            Email = "alexander.walker@example.com",
-                            FirstName = "Alexander",
-                            HireDate = new DateTime(2026, 6, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 5,
-                            LastName = "Walker",
-                            PhoneNumber = "0471000016",
-                            Salary = 3300m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 17,
-                            DateOfBirth = new DateTime(2000, 1, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 4,
-                            Email = "emily.hall@example.com",
-                            FirstName = "Emily",
-                            HireDate = new DateTime(2026, 7, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 4,
-                            LastName = "Hall",
-                            PhoneNumber = "0471000017",
-                            Salary = 2800m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 18,
-                            DateOfBirth = new DateTime(1995, 11, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 1,
-                            Email = "daniel.young@example.com",
-                            FirstName = "Daniel",
-                            HireDate = new DateTime(2026, 7, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 1,
-                            LastName = "Young",
-                            PhoneNumber = "0471000018",
-                            Salary = 3700m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 19,
-                            DateOfBirth = new DateTime(1999, 9, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 3,
-                            Email = "ella.king@example.com",
-                            FirstName = "Ella",
-                            HireDate = new DateTime(2026, 8, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 3,
-                            LastName = "King",
-                            PhoneNumber = "0471000019",
-                            Salary = 2950m,
-                            Status = 1
-                        },
-                        new
-                        {
-                            Id = 20,
-                            DateOfBirth = new DateTime(1993, 5, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 2,
-                            Email = "matthew.wright@example.com",
-                            FirstName = "Matthew",
-                            HireDate = new DateTime(2026, 8, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 2,
-                            LastName = "Wright",
-                            PhoneNumber = "0471000020",
-                            Salary = 3150m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 21,
-                            DateOfBirth = new DateTime(1996, 3, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 5,
-                            Email = "grace.scott@example.com",
-                            FirstName = "Grace",
-                            HireDate = new DateTime(2026, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 5,
-                            LastName = "Scott",
-                            PhoneNumber = "0471000021",
-                            Salary = 3450m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 22,
-                            DateOfBirth = new DateTime(1991, 7, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 1,
-                            Email = "samuel.green@example.com",
-                            FirstName = "Samuel",
-                            HireDate = new DateTime(2026, 9, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 1,
-                            LastName = "Green",
-                            PhoneNumber = "0471000022",
-                            Salary = 4000m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 23,
-                            DateOfBirth = new DateTime(1998, 10, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 3,
-                            Email = "chloe.baker@example.com",
-                            FirstName = "Chloe",
-                            HireDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 3,
-                            LastName = "Baker",
-                            PhoneNumber = "0471000023",
-                            Salary = 2850m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 24,
-                            DateOfBirth = new DateTime(1995, 12, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 2,
-                            Email = "jack.adams@example.com",
-                            FirstName = "Jack",
-                            HireDate = new DateTime(2026, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 2,
-                            LastName = "Adams",
-                            PhoneNumber = "0471000024",
-                            Salary = 3500m,
-                            Status = 0
-                        },
-                        new
-                        {
-                            Id = 25,
-                            DateOfBirth = new DateTime(1997, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 4,
-                            Email = "lily.nelson@example.com",
-                            FirstName = "Lily",
-                            HireDate = new DateTime(2026, 10, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            JobPositionId = 4,
-                            LastName = "Nelson",
-                            PhoneNumber = "0471000025",
-                            Salary = 3100m,
-                            Status = 1
-                        });
                 });
 
             modelBuilder.Entity("EmployeeManager.Domain.Entities.JobPosition", b =>
@@ -477,74 +118,365 @@ namespace EmployeeManager.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal?>("MaximumSalary")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("MinimumSalary")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("JobPositions");
+                    b.HasIndex("OrganizationId", "Title")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            MaximumSalary = 4500m,
-                            MinimumSalary = 2800m,
-                            Title = "Software Developer"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            MaximumSalary = 4000m,
-                            MinimumSalary = 2500m,
-                            Title = "Sales Representative"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            MaximumSalary = 4000m,
-                            MinimumSalary = 2500m,
-                            Title = "Marketing Specialist"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            MaximumSalary = 4200m,
-                            MinimumSalary = 2600m,
-                            Title = "HR Specialist"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            MaximumSalary = 4500m,
-                            MinimumSalary = 2800m,
-                            Title = "Financial Analyst"
-                        });
+                    b.ToTable("JobPositions");
+                });
+
+            modelBuilder.Entity("EmployeeManager.Domain.Entities.Organization", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId")
+                        .IsUnique();
+
+                    b.ToTable("Organizations");
+                });
+
+            modelBuilder.Entity("EmployeeManager.Infrastructure.Identity.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("EmployeeManager.Domain.Entities.Department", b =>
+                {
+                    b.HasOne("EmployeeManager.Domain.Entities.Organization", "Organization")
+                        .WithMany("Departments")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("EmployeeManager.Domain.Entities.Employee", b =>
                 {
+                    b.HasOne("EmployeeManager.Domain.Entities.Organization", "Organization")
+                        .WithMany("Employees")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("EmployeeManager.Domain.Entities.Department", "Department")
                         .WithMany("Employees")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("DepartmentId", "OrganizationId")
+                        .HasPrincipalKey("Id", "OrganizationId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("EmployeeManager.Domain.Entities.JobPosition", "JobPosition")
                         .WithMany("Employees")
-                        .HasForeignKey("JobPositionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("JobPositionId", "OrganizationId")
+                        .HasPrincipalKey("Id", "OrganizationId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Department");
 
                     b.Navigation("JobPosition");
+
+                    b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("EmployeeManager.Domain.Entities.JobPosition", b =>
+                {
+                    b.HasOne("EmployeeManager.Domain.Entities.Organization", "Organization")
+                        .WithMany("JobPositions")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("EmployeeManager.Domain.Entities.Organization", b =>
+                {
+                    b.HasOne("EmployeeManager.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("EmployeeManager.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("EmployeeManager.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EmployeeManager.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("EmployeeManager.Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("EmployeeManager.Domain.Entities.Department", b =>
@@ -555,6 +487,15 @@ namespace EmployeeManager.Infrastructure.Migrations
             modelBuilder.Entity("EmployeeManager.Domain.Entities.JobPosition", b =>
                 {
                     b.Navigation("Employees");
+                });
+
+            modelBuilder.Entity("EmployeeManager.Domain.Entities.Organization", b =>
+                {
+                    b.Navigation("Departments");
+
+                    b.Navigation("Employees");
+
+                    b.Navigation("JobPositions");
                 });
 #pragma warning restore 612, 618
         }

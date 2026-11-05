@@ -1,5 +1,4 @@
-﻿using EmployeeManager.Application.DTOs.JobPosition;
-using EmployeeManager.Application.DTOs.JobPosition.Request;
+﻿using EmployeeManager.Application.DTOs.JobPosition.Request;
 using EmployeeManager.Application.DTOs.JobPosition.Response;
 using EmployeeManager.Application.Exceptions;
 using EmployeeManager.Application.Interfaces;
@@ -10,22 +9,28 @@ namespace EmployeeManager.Application.Services;
 public class JobPositionService : IJobPositionService
 {
     private readonly IJobPositionRepository _jobPositionRepository;
+    private readonly ICurrentOrganization _currentOrganization;
 
-    public JobPositionService(IJobPositionRepository jobPositionRepository)
+    public JobPositionService(IJobPositionRepository jobPositionRepository, ICurrentOrganization currentOrganization)
     {
         _jobPositionRepository = jobPositionRepository;
+        _currentOrganization = currentOrganization;
     }
+
+
 
     public async Task<List<JobPositionResponseDto>> GetAllAsync()
     {
-        var jobPositions = await _jobPositionRepository.GetAllAsync();
+        var organizationId = await _currentOrganization.GetOrganizationIdAsync();
+        var jobPositions = await _jobPositionRepository.GetAllAsync(organizationId);
 
         return jobPositions.Select(MapToResponseDto).ToList();
     }
 
     public async Task<JobPositionResponseDto?> GetByIdAsync(int id)
     {
-        var jobPosition = await _jobPositionRepository.GetByIdAsync(id);
+        var organizationId = await _currentOrganization.GetOrganizationIdAsync();
+        var jobPosition = await _jobPositionRepository.GetByIdAsync(id, organizationId);
 
         if (jobPosition == null)
         {
@@ -37,7 +42,8 @@ public class JobPositionService : IJobPositionService
 
     public async Task<JobPositionResponseDto> CreateAsync(JobPositionRequestDto request)
     {
-        var titleExists = await _jobPositionRepository.TitleExistsAsync(request.Title);
+        var organizationId = await _currentOrganization.GetOrganizationIdAsync();
+        var titleExists = await _jobPositionRepository.TitleExistsAsync(request.Title, organizationId);
 
         if (titleExists)
         {
@@ -53,6 +59,7 @@ public class JobPositionService : IJobPositionService
 
         var jobPosition = new JobPosition
         {
+            OrganizationId = organizationId,
             Title = request.Title,
             MinimumSalary = request.MinimumSalary,
             MaximumSalary = request.MaximumSalary
@@ -65,14 +72,15 @@ public class JobPositionService : IJobPositionService
 
     public async Task<bool> UpdateAsync(int id, JobPositionRequestDto request)
     {
-        var jobPosition = await _jobPositionRepository.GetByIdAsync(id);
+        var organizationId = await _currentOrganization.GetOrganizationIdAsync();
+        var jobPosition = await _jobPositionRepository.GetByIdAsync(id, organizationId);
 
         if (jobPosition == null)
         {
             return false;
         }
 
-        var titleExists = await _jobPositionRepository.TitleExistsAsync(request.Title, id);
+        var titleExists = await _jobPositionRepository.TitleExistsAsync(request.Title, organizationId, id);
 
         if (titleExists)
         {
@@ -97,14 +105,15 @@ public class JobPositionService : IJobPositionService
 
     public async Task<bool> DeleteAsync(int id)
     {
-        var jobPosition = await _jobPositionRepository.GetByIdAsync(id);
+        var organizationId = await _currentOrganization.GetOrganizationIdAsync();
+        var jobPosition = await _jobPositionRepository.GetByIdAsync(id, organizationId);
 
         if (jobPosition == null)
         {
             return false;
         }
 
-        var hasEmployees = await _jobPositionRepository.HasEmployeesAsync(id);
+        var hasEmployees = await _jobPositionRepository.HasEmployeesAsync(id, organizationId);
 
         if (hasEmployees)
         {

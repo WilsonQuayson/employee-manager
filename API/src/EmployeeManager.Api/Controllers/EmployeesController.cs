@@ -3,11 +3,13 @@ using EmployeeManager.Application.DTOs.Employee.Request;
 using EmployeeManager.Application.DTOs.Employee.Response;
 using EmployeeManager.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EmployeeManager.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class EmployeesController : ControllerBase
 {
     private readonly IEmployeeService _employeeService;
