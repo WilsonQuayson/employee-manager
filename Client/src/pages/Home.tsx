@@ -8,6 +8,7 @@ import type { DashboardResponse } from "../types/dashboard";
 import DepartmentDistributionChart from "../components/DepartmentDistributionChart";
 import EmploymentStatusChart from "../components/EmploymentStatusChart";
 import SalaryBandsChart from "../components/SalaryBandsChart";
+import { useCurrentUser } from "../hooks/useAuth";
 
 const Home: React.FC = () => {
     const {
@@ -15,6 +16,8 @@ const Home: React.FC = () => {
         isPending: loading,
         isError,
     } = useQuery<DashboardResponse>({queryKey: ["dashboard"],queryFn: getDashboard});
+
+    const { data: user } = useCurrentUser();
 
     if (loading) {
         return (
@@ -40,7 +43,9 @@ const Home: React.FC = () => {
         <section className="p-4 sm:p-6 lg:p-8">
             <section>
                 <Breadcrumb page="Dashboard" />
-                <h1 className="font-medium text-4xl">Good morning, Wilson</h1>
+                <h1 className="font-medium text-4xl">
+                    Good morning, {user?.displayName ?? "there"}
+                </h1>
                 <p className="pt-2 text-ring">Here's what's happening across your organization today</p>
             </section>
             <section className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">

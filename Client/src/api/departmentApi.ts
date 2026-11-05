@@ -1,67 +1,31 @@
+
+import { apiClient } from "./apiClient";
 import type { DepartmentRequest, DepartmentResponse } from "../types/department";
 
-export async function getDepartments(): Promise<DepartmentResponse[]> {
-    const response = await fetch("https://localhost:7101/api/Departments");
+export const getDepartments = async (): Promise<DepartmentResponse[]> => {
+  return apiClient<DepartmentResponse[]>("/Departments");
+};
 
-    if (!response.ok) {
-        throw new Error("Failed to fetch departments");
-    }
+export const getDepartmentById = async (id: number): Promise<DepartmentResponse> => {
+  return apiClient<DepartmentResponse>(`/Departments/${id}`);
+};
 
-    return response.json();
-}
+export const createDepartment = async (department: DepartmentRequest): Promise<DepartmentResponse> => {
+  return apiClient<DepartmentResponse>("/Departments", {
+    method: "POST",
+    body: JSON.stringify(department),
+  });
+};
 
-export async function getDepartmentById(id: number): Promise<DepartmentResponse> {
-    const response = await fetch(`https://localhost:7101/api/Departments/${id}`);
+export const updateDepartment = async (id: number, department: DepartmentRequest): Promise<void> => {
+  await apiClient<void>(`/Departments/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(department),
+  });
+};
 
-    if(!response.ok){
-        throw new Error("Failed to fetch department");
-    }
-
-    return response.json();
-}
-
-export async function createDepartment(department: DepartmentRequest): Promise<DepartmentResponse> {
-    const url = "https://localhost:7101/api/Departments";
-
-    const response = await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(department),
-    });
-
-    if (!response.ok) {
-        throw new Error("Failed to create department");
-    }
-
-    return response.json();
-}
-
-export async function updateDepartment(id: number, department: DepartmentRequest): Promise<void> {
-    const url = `https://localhost:7101/api/Departments/${id}`;
-
-    const response = await fetch(url, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(department),
-    });
-
-    if (!response.ok) {
-        throw new Error("Failed to update department");
-    }
-}
-
-export async function deleteDepartment(id: number): Promise<void> {
-    const url = `https://localhost:7101/api/Departments/${id}`;
-
-    const response = await fetch(url, {
-        method: "DELETE",
-    });
-
-    if (!response.ok) {
-        throw new Error("Failed to delete department");
-    }
-}
+export const deleteDepartment = async (id: number): Promise<void> => {
+  await apiClient<void>(`/Departments/${id}`, {
+    method: "DELETE",
+  });
+};
