@@ -12,21 +12,34 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    try {
-      await loginMutation.mutateAsync({ email, password });
+    loginMutation.mutate(
+      { email, password },
+      {
+        onSuccess: () => {
+          const destination = location.state?.from;
+          const redirectTo = destination
+            ? `${destination.pathname}${destination.search ?? ""}${destination.hash ?? ""}`
+            : "/";
 
-      const destination = location.state?.from;
-      const redirectTo = destination
-        ? `${destination.pathname}${destination.search ?? ""}${destination.hash ?? ""}`
-        : "/";
+          navigate(redirectTo, { replace: true });
+        },
+      }
+    );
+  };
 
-      navigate(redirectTo, { replace: true });
-    } catch {
-      // Error displayed below
-    }
+  const handleDemoLogin = () => {
+    loginMutation.mutate(
+      {
+        email: "demo@example.com",
+        password: "DemoPassword123!",
+      },
+      {
+        onSuccess: () => navigate("/", { replace: true }),
+      }
+    );
   };
 
   return (
@@ -87,6 +100,14 @@ const Login = () => {
           >
             {loginMutation.isPending ? "Signing in..." : "Sign in"}
           </button>
+          <button
+            type="button"
+            onClick={handleDemoLogin}
+            disabled={loginMutation.isPending}
+            className="w-full cursor-pointer rounded-lg border border-emerald-600 py-3 text-sm font-medium text-emerald-600 transition hover:bg-emerald-50 disabled:opacity-60"
+          >
+            Try Demo Account
+          </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-slate-500">
@@ -99,12 +120,6 @@ const Login = () => {
           <button type="button" aria-label="Demo credentials" className="cursor-help text-slate-400 hover:text-emerald-600">
             <CircleHelp size={20} />
           </button>
-
-          <div className="absolute right-0 top-full z-10 hidden w-64 rounded-lg border border-slate-200 bg-white p-4 text-sm shadow-lg group-hover:block">
-            <p className="mb-2 font-semibold">Demo Account</p>
-            <p>Email: demo@example.com</p>
-            <p>Password: DemoPassword123!</p>
-          </div>
         </div>
       </div>
     </div>
