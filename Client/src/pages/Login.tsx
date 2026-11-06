@@ -52,7 +52,7 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@company.com"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             />
           </div>
 
@@ -68,7 +68,7 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             />
           </div>
 
@@ -96,7 +96,7 @@ const Login = () => {
           </Link>
         </p>
         <div className="group absolute right-4 top-4">
-          <button type="button" aria-label="Demo credentials" className="cursor-help text-slate-400 hover:text-indigo-600">
+          <button type="button" aria-label="Demo credentials" className="cursor-help text-slate-400 hover:text-emerald-600">
             <CircleHelp size={20} />
           </button>
 
