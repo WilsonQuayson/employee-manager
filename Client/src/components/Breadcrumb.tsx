@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { useCurrentUser } from "../hooks/useAuth";
 
 type BreadcrumbProps = {
     page: string;
@@ -9,10 +10,12 @@ type BreadcrumbProps = {
 };
 
 const Breadcrumb = ({ page, parent }: BreadcrumbProps) => {
+    const { data: user } = useCurrentUser();
+
     return (
         <nav aria-label="Breadcrumb" className="flex items-center gap-4 text-sm">
             <NavLink to="/" className="text-ring hover:text-emerald-600">
-                Northwind
+                {user?.organizationName ?? "Organization"}
             </NavLink>
 
             <span className="text-ring">{'>'}</span>

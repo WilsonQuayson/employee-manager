@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useLogin } from "../hooks/useAuth";
 import { ApiError } from "../api/apiClient";
+import { CircleHelp } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -82,7 +83,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loginMutation.isPending}
-            className="w-full rounded-lg bg-indigo-600 py-3 text-sm font-medium text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-lg bg-emerald-600 py-3 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loginMutation.isPending ? "Signing in..." : "Sign in"}
           </button>
@@ -90,10 +91,21 @@ const Login = () => {
 
         <p className="mt-6 text-center text-sm text-slate-500">
           Don't have an account?{" "}
-          <Link to="/register" className="font-medium text-indigo-600 hover:underline">
+          <Link to="/register" className="font-medium text-emerald-600 hover:underline">
             Create account
           </Link>
         </p>
+        <div className="group absolute right-4 top-4">
+          <button type="button" aria-label="Demo credentials" className="cursor-help text-slate-400 hover:text-indigo-600">
+            <CircleHelp size={20} />
+          </button>
+
+          <div className="absolute right-0 top-full z-10 hidden w-64 rounded-lg border border-slate-200 bg-white p-4 text-sm shadow-lg group-hover:block">
+            <p className="mb-2 font-semibold">Demo Account</p>
+            <p>Email: demo@example.com</p>
+            <p>Password: DemoPassword123!</p>
+          </div>
+        </div>
       </div>
     </div>
   );

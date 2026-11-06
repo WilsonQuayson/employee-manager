@@ -118,7 +118,7 @@ const Register = () => {
           <button
             type="submit"
             disabled={registerMutation.isPending}
-            className="w-full cursor-pointer rounded-lg bg-indigo-600 py-3 text-sm font-medium text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full cursor-pointer rounded-lg bg-emerald-600 py-3 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {registerMutation.isPending ? "Creating account..." : "Create account"}
           </button>
@@ -126,7 +126,7 @@ const Register = () => {
 
         <p className="mt-6 text-center text-sm text-slate-500">
           Already have an account?{" "}
-          <Link to="/login" className="font-medium text-indigo-600 hover:underline">
+          <Link to="/login" className="font-medium text-emerald-600 hover:underline">
             Sign in
           </Link>
         </p>
