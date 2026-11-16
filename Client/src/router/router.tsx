@@ -8,6 +8,7 @@ import Departments from "../pages/Departments";
 import EmployeeDetails from "../pages/EmployeeDetails";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import Settings from "../pages/Settings";
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
           {
             path: "employees/:id",
             element: <EmployeeDetails />,
+          },
+          {
+            path: "settings",
+            element: <Settings />,
           },
         ],
       },

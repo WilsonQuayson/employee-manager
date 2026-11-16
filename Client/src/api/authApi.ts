@@ -28,3 +28,10 @@ export const logout = async (): Promise<void> => {
 export const getCurrentUser = async (): Promise<CurrentUser> => {
   return apiClient<CurrentUser>("/auth/me");
 };
+
+export const updateOrganization = async (organizationName: string): Promise<void> => {
+  await apiClient("/auth/organization", {
+    method: "PATCH",
+    body: JSON.stringify({ organizationName }),
+  });
+};

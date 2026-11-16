@@ -44,7 +44,7 @@ const Home: React.FC = () => {
             <section>
                 <Breadcrumb page="Dashboard" />
                 <h1 className="font-medium text-4xl">
-                    Good morning, {user?.displayName ?? "there"}
+                    Welcome, {user?.displayName ?? "there"}
                 </h1>
                 <p className="pt-2 text-ring">Here's what's happening across your organization today</p>
             </section>

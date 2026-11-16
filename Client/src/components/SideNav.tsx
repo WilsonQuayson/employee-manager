@@ -12,7 +12,7 @@ const menuItemsOne = [
 ];
 
 const menuItemsTwo = [
-    { label: "Settings", icon: SettingsIcon, to: "#" }
+    { label: "Settings", icon: SettingsIcon, to: "settings" }
 ];
 
 const SideNav = () => {
@@ -36,7 +36,7 @@ const SideNav = () => {
                     <h1 className="font-medium truncate" title={user?.organizationName}>
                         {user?.organizationName ?? "Employee Manager"}
                     </h1>
-                    <p>Workforce suite</p>
+                    <p>Employee Manager</p>
                 </div>
             </section>
 
