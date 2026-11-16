@@ -112,5 +112,26 @@ namespace EmployeeManager.Infrastructure.Identity
                 OrganizationName = organization.Name
             };
         }
+
+        public async Task UpdateOrganizationAsync(string userId, string organizationName)
+        {
+            var organization = await context.Organizations
+                .FirstOrDefaultAsync(o => o.OwnerId == userId);
+
+            if (organization is null)
+                throw new KeyNotFoundException("Organization not found.");
+
+            if (string.IsNullOrWhiteSpace(organizationName))
+                throw new ArgumentException("Organization name cannot be empty.");
+
+            organizationName = organizationName.Trim();
+
+            if (organizationName.Length > 100)
+                throw new ArgumentException("Organization name cannot exceed 100 characters.");
+
+            organization.Name = organizationName;
+
+            await context.SaveChangesAsync();
+        }
     }
 }

@@ -13,5 +13,6 @@ namespace EmployeeManager.Application.Interfaces
         Task<LoginResult> LoginAsync(LoginRequest request);
         Task LogoutAsync();
         Task<CurrentUserResponse?> GetCurrentUserAsync(string userId);
+        Task UpdateOrganizationAsync(string userId, string organizationName);
     }
 }

@@ -90,5 +90,19 @@ namespace EmployeeManager.Api.Controllers
 
             return Ok(new { token = tokens.RequestToken });
         }
+
+        [Authorize]
+        [HttpPatch("organization")]
+        public async Task<IActionResult> UpdateOrganization(UpdateOrganizationRequest request)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            await authService.UpdateOrganizationAsync(userId, request.OrganizationName);
+
+            return NoContent();
+        }
     }
 }
