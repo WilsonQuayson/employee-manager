@@ -1,4 +1,4 @@
-import { Users, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import type { DepartmentResponse } from "../types/department";
 
 interface DepartmentCardProps {
