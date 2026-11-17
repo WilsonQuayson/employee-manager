@@ -15,6 +15,7 @@ dist/
 
 bin/
 obj/
+API/src/EmployeeManager.Api/wwwroot/
 
 # Visual Studio
 .vs/

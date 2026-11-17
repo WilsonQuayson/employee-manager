@@ -1,4 +1,5 @@
-﻿using EmployeeManager.Domain.Entities;
+﻿
+using EmployeeManager.Domain.Entities;
 using EmployeeManager.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,45 +16,40 @@ public static class DevelopmentSeeder
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var email = "demo@example.com";
 
-        await using var transaction = await context.Database.BeginTransactionAsync();
-
         var user = await userManager.FindByEmailAsync(email);
 
-        if (user == null)
+        // Only seed the demo account once.
+        if (user != null)
+            return;
+
+        var password = configuration["Seed:Password"]
+            ?? throw new InvalidOperationException("Demo account seed password is missing.");
+
+        await using var transaction = await context.Database.BeginTransactionAsync();
+
+        user = new ApplicationUser
         {
-            var password = configuration["Seed:Password"]
-                ?? throw new InvalidOperationException("Development seed password is missing.");
+            UserName = email,
+            Email = email,
+            DisplayName = "Demo User"
+        };
 
-            user = new ApplicationUser
-            {
-                UserName = email,
-                Email = email,
-                DisplayName = "Demo User"
-            };
+        var result = await userManager.CreateAsync(user, password);
 
-            var result = await userManager.CreateAsync(user, password);
-
-            if (!result.Succeeded)
-            {
-                throw new InvalidOperationException(
-                    string.Join(", ", result.Errors.Select(e => e.Description)));
-            }
+        if (!result.Succeeded)
+        {
+            throw new InvalidOperationException(
+                string.Join(", ", result.Errors.Select(e => e.Description)));
         }
 
-        var organization = await context.Organizations
-            .FirstOrDefaultAsync(o => o.OwnerId == user.Id);
-
-        if (organization == null)
+        var organization = new Organization
         {
-            organization = new Organization
-            {
-                Name = "Demo Organization",
-                OwnerId = user.Id
-            };
+            Name = "Demo Organization",
+            OwnerId = user.Id
+        };
 
-            context.Organizations.Add(organization);
-            await context.SaveChangesAsync();
-        }
+        context.Organizations.Add(organization);
+        await context.SaveChangesAsync();
 
         var departmentNames = new[]
         {
@@ -66,15 +62,11 @@ public static class DevelopmentSeeder
 
         foreach (var name in departmentNames)
         {
-            if (!await context.Departments.AnyAsync(d =>
-                d.OrganizationId == organization.Id && d.Name == name))
+            context.Departments.Add(new Department
             {
-                context.Departments.Add(new Department
-                {
-                    Name = name,
-                    OrganizationId = organization.Id
-                });
-            }
+                Name = name,
+                OrganizationId = organization.Id
+            });
         }
 
         await context.SaveChangesAsync();
@@ -93,17 +85,13 @@ public static class DevelopmentSeeder
 
         foreach (var position in positions)
         {
-            if (!await context.JobPositions.AnyAsync(j =>
-                j.OrganizationId == organization.Id && j.Title == position.Title))
+            context.JobPositions.Add(new JobPosition
             {
-                context.JobPositions.Add(new JobPosition
-                {
-                    Title = position.Title,
-                    MinimumSalary = position.Min,
-                    MaximumSalary = position.Max,
-                    OrganizationId = organization.Id
-                });
-            }
+                Title = position.Title,
+                MinimumSalary = position.Min,
+                MaximumSalary = position.Max,
+                OrganizationId = organization.Id
+            });
         }
 
         await context.SaveChangesAsync();
@@ -149,37 +137,24 @@ public static class DevelopmentSeeder
             ("Chloe", "Nelson", "Operations", "Project Manager", 3900m, 0)
         };
 
-        var existingEmails = (await context.Employees
-            .Where(e => e.OrganizationId == organization.Id)
-            .Select(e => e.Email)
-            .ToListAsync()).ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        for (var i = 0; i < employees.Length; i++)
+        foreach (var (first, last, department, position, salary, monthsAgo) in employees)
         {
-            var employee = employees[i];
-            var employeeEmail = $"{employee.First.ToLower()}.{employee.Last.ToLower()}@demo.example.com";
-
-            if (existingEmails.Contains(employeeEmail))
-            {
-                continue;
-            }
+            var index = Array.FindIndex(employees, e => e.First == first && e.Last == last);
 
             context.Employees.Add(new Employee
             {
                 OrganizationId = organization.Id,
-                FirstName = employee.First,
-                LastName = employee.Last,
-                Email = employeeEmail,
+                FirstName = first,
+                LastName = last,
+                Email = $"{first.ToLower()}.{last.ToLower()}@demo.example.com",
                 PhoneNumber = null,
-                DateOfBirth = new DateTime(1985 + (i % 15), (i % 12) + 1, (i % 27) + 1),
-                HireDate = DateTime.UtcNow.Date.AddMonths(-employee.MonthsAgo),
+                DateOfBirth = new DateTime(1985 + (index % 15), (index % 12) + 1, (index % 27) + 1),
+                HireDate = DateTime.UtcNow.Date.AddMonths(-monthsAgo),
                 Status = default,
-                Salary = employee.Salary,
-                DepartmentId = departments[employee.Department],
-                JobPositionId = jobPositions[employee.Position]
+                Salary = salary,
+                DepartmentId = departments[department],
+                JobPositionId = jobPositions[position]
             });
-
-            existingEmails.Add(employeeEmail);
         }
 
         await context.SaveChangesAsync();

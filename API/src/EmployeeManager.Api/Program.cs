@@ -132,9 +132,8 @@ namespace EmployeeManager.Api
             app.MapControllers();
             app.MapFallbackToFile("index.html");
 
-            if (app.Environment.IsDevelopment())
+            using (var scope = app.Services.CreateScope())
             {
-                using var scope = app.Services.CreateScope();
                 await DevelopmentSeeder.SeedAsync(scope.ServiceProvider, app.Configuration);
             }
 
