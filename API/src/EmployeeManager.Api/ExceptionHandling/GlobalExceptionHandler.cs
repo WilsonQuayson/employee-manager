@@ -4,27 +4,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManager.Api.ExceptionHandling
 {
-    public class GlobalExceptionHandler : IExceptionHandler
+    public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
     {
-        private readonly ILogger<GlobalExceptionHandler> _logger;
-
-        public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+        public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
-            _logger = logger;
-        }
-
-        public async ValueTask<bool> TryHandleAsync(
-            HttpContext httpContext,
-            Exception exception,
-            CancellationToken cancellationToken)
-        {
-            _logger.LogError(exception, "An exception occurred: {Message}", exception.Message);
-
             var (statusCode, title) = exception switch
             {
-                BadRequestException => (
+                BadRequestException or ArgumentException => (
                     StatusCodes.Status400BadRequest,
                     "Bad Request"),
+
+                KeyNotFoundException => (
+                    StatusCodes.Status404NotFound,
+                    "Not Found"),
 
                 ConflictException => (
                     StatusCodes.Status409Conflict,
@@ -35,20 +27,23 @@ namespace EmployeeManager.Api.ExceptionHandling
                     "Internal Server Error")
             };
 
+            logger.LogError(exception, "Request failed with status {StatusCode}", statusCode);
+
             var problemDetails = new ProblemDetails
             {
                 Status = statusCode,
                 Title = title,
-                Detail = exception is BadRequestException or ConflictException
+                Detail = exception is BadRequestException
+                    or ArgumentException
+                    or KeyNotFoundException
+                    or ConflictException
                     ? exception.Message
                     : "An unexpected error occurred."
             };
 
             httpContext.Response.StatusCode = statusCode;
 
-            await httpContext.Response.WriteAsJsonAsync(
-                problemDetails,
-                cancellationToken);
+            await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
             return true;
         }

@@ -71,16 +71,19 @@ namespace EmployeeManager.Api
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
 
-            builder.Services.AddCors(options =>
+            if (builder.Environment.IsDevelopment())
             {
-                options.AddPolicy("Frontend", policy =>
+                builder.Services.AddCors(options =>
                 {
-                    policy.WithOrigins("http://localhost:5173")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials();
+                    options.AddPolicy("Frontend", policy =>
+                    {
+                        policy.WithOrigins("http://localhost:5173")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowCredentials();
+                    });
                 });
-            });
+            }
 
             builder.Services.AddControllersWithViews(options =>
             {
@@ -109,14 +112,25 @@ namespace EmployeeManager.Api
 
             app.UseExceptionHandler();
 
-            app.UseHttpsRedirection();
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseHsts();
+            }
 
-            app.UseCors("Frontend");
+            app.UseHttpsRedirection();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseCors("Frontend");
+            }
 
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
+            app.MapFallbackToFile("index.html");
 
             if (app.Environment.IsDevelopment())
             {
